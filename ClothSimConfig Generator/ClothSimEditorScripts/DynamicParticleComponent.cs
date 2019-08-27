@@ -13,6 +13,7 @@ public class DynamicParticleComponent : MonoBehaviour
     public ClothSimEntity ClothSimEntity { get; set; }
     public ParticleInfo ParticleInfo;
     public List<ConstraintInfo> ConstraintParticles { get; set; }
+    public List<bool> Selected { get; set; }
 
     
 
@@ -48,16 +49,16 @@ public class DynamicParticleComponent : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        //ClothSimConstraintsEditorWindow constraintsWindow = EditorWindow.GetWindow<ClothSimConstraintsEditorWindow>();
         Gizmos.color = Color.red;
         Handles.Label(ParticleInfo.VertInfo.Position, ParticleInfo.VertInfo.VertID.ToString());
         Gizmos.DrawWireSphere(ParticleInfo.VertInfo.Position, ParticleInfo.ConfigValues.m_colliderRadius * ParticleInfo.VertInfo.ColliderRadiusScale);
 
-        //int index = 0;
+        int index = 0;
         Gizmos.color = Color.yellow;
         foreach (ConstraintInfo constraintInfo in ConstraintParticles)
         {
-            //Gizmos.color = (constraintsWindow.m_selected[index++]) ? Color.yellow : Color.red;
+            if(Selected != null)
+                Gizmos.color = (Selected[index++]) ? Color.green : Color.yellow;
             Gizmos.DrawLine(ParticleInfo.VertInfo.Position, constraintInfo.ConstraintParticle.transform.position);
         }
     }
