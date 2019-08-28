@@ -54,10 +54,11 @@ public class ClothSimEntity : MonoBehaviour
 
         gameObject.name = "Particle VertID : ";
 
-        particle.ParticleInfo = new ParticleInfo();
-
-        particle.ParticleInfo.VertInfo = new VertInfoTable.VertInfo();
-        particle.ParticleInfo.JointInfo = new JointInfoTable.JointInfoDefinition();
+        particle.ParticleInfo = new ParticleInfo
+        {
+            VertInfo = new VertInfoTable.VertInfo(),
+            JointInfo = new JointInfoTable.JointInfoDefinition()
+        };
 
         m_config.AddVert(particle.ParticleInfo.VertInfo);
         m_config.AddJointInfo(particle.ParticleInfo.JointInfo);
@@ -81,6 +82,7 @@ public class ClothSimEntity : MonoBehaviour
             particle.ParticleInfo = info;
 
             m_particleEntities.Add(info.VertInfo.VertID, gameObject);
+            gameObject.transform.SetParent(this.gameObject.transform);
         }
 
         foreach(GameObject gameObject in m_particleEntities.Values)
@@ -149,12 +151,19 @@ public class ClothSimEntity : MonoBehaviour
         return m_config.GetConstraintDefinitions();
     }
 
+    public Dictionary<string, List<int>> GetVertOrders()
+    {
+        return m_config.GetVertOrders();
+    }
+
     public bool LoadConfiguration()
     {
         bool success = false;
 
         m_luaScript.DoFile(m_scriptPath);
         success = m_config.Deserialise(m_luaScript);
+
+        GenerateFromConfig();
 
         return success;
     }

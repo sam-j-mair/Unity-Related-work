@@ -7,6 +7,12 @@ using UnityEngine;
 public class VertOrdersTable
 {
     private Dictionary<string, List<int>> m_vertOrders = new Dictionary<string, List<int>>();
+    public Dictionary<string, List<int>> VertOrders { get; private set; }
+
+    public VertOrdersTable()
+    {
+        VertOrders = m_vertOrders;
+    }
 
     public void Render()
     {

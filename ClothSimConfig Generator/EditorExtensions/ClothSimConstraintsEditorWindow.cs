@@ -22,7 +22,7 @@ public class ClothSimConstraintsEditorWindow : EditorWindow
     {
         if ((ParticleComponent != null))
         {
-            GUILayout.Label("Cloth Simulation Constraints Settings", EditorStyles.boldLabel);
+            GUILayout.Label("Cloth Simulation Constraints for VertID " + ParticleComponent.name, EditorStyles.boldLabel);
             ClothSimEntity clothSimEntity = ParticleComponent.ClothSimEntity;
             Dictionary<string, DynamicPropertiesDef> constraintProperties = clothSimEntity.GetConstraintDefinitions();
 

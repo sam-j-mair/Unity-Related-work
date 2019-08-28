@@ -11,6 +11,7 @@ public class ClothSimInspector : Editor
     bool m_foldoutState = false;
     int m_currentPropertiesIndex = 0;
     string m_newProperiesName = "";
+    int m_selectedVertOrderIndex = 0;
 
     public override void OnInspectorGUI()
     {
@@ -19,8 +20,8 @@ public class ClothSimInspector : Editor
 
         if (config != null)
         {
-            clothSimEntity.m_outputPath = EditorGUILayout.TextField("Output Path", clothSimEntity.m_outputPath);
-            clothSimEntity.m_scriptPath = EditorGUILayout.TextField("Load Script Path", clothSimEntity.m_scriptPath);
+            //clothSimEntity.m_outputPath = EditorGUILayout.TextField("Output Path", clothSimEntity.m_outputPath);
+            //clothSimEntity.m_scriptPath = EditorGUILayout.TextField("Load Script Path", clothSimEntity.m_scriptPath);
             config.m_configValues.m_mass = EditorGUILayout.FloatField("Global Mass", config.m_configValues.m_mass);
             config.m_configValues.m_pullToSkin = EditorGUILayout.FloatField("Pull To Skin", config.m_configValues.m_pullToSkin);
             config.m_configValues.m_pullToSkinLimit = EditorGUILayout.FloatField("Pull To Skin Limit", config.m_configValues.m_pullToSkinLimit);
@@ -34,11 +35,13 @@ public class ClothSimInspector : Editor
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Load"))
         {
+            clothSimEntity.m_scriptPath = EditorUtility.OpenFilePanel("Open", "/Assets/Scenes/ClothSimConfig Generator", "lua");
             clothSimEntity.LoadConfiguration();
         }
 
         if (GUILayout.Button("Save"))
         {
+            clothSimEntity.m_outputPath = EditorUtility.SaveFilePanel("Save", "/Assets/Scenes/ClothSimConfig Generator", "output", "lua");
             clothSimEntity.SaveConfiguration();
         }
         EditorGUILayout.EndHorizontal();
@@ -92,7 +95,14 @@ public class ClothSimInspector : Editor
             def.Inert = EditorGUILayout.FloatField("Inert", def.Inert);
             def.Amount = EditorGUILayout.FloatField("Amount", def.Amount);
             def.Priority = EditorGUILayout.IntField("Priority", def.Priority);
-            def.VertOrder = EditorGUILayout.TextField("Vert Order", def.VertOrder);
+
+            string[] vertOrders = clothSimEntity.GetVertOrders().Keys.ToArray();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel("VertOrder");
+            m_selectedVertOrderIndex = EditorGUILayout.Popup(m_selectedVertOrderIndex, vertOrders);
+            def.VertOrder = vertOrders[m_selectedVertOrderIndex];
+            EditorGUILayout.EndHorizontal();
 
             m_currentPropertiesIndex = (newIndex != m_currentPropertiesIndex) ? newIndex : m_currentPropertiesIndex;
 

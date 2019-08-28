@@ -102,6 +102,11 @@ public class ClothSimConfig
         return def;
     }
 
+    public Dictionary<string, List<int>> GetVertOrders()
+    {
+        return m_vertOrders.VertOrders;
+    }
+
     public Dictionary<string, DynamicPropertiesDef> GetConstraintDefinitions()
     {
         return m_propertiesTable.GetContraintDefinitions();
