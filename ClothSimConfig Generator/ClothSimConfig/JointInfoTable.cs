@@ -59,10 +59,10 @@ public class JointInfoTable : ILuaSerialiser
                 }
                 stringBuilder.Append("}, ");
             }
-            stringBuilder.Append("},\n");
+            stringBuilder.Append("}, },\n");
         }
 
-        stringBuilder.Append("    }, },\n");
+        stringBuilder.Append("    },\n");
 
         success = true;
         return success;
