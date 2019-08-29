@@ -83,10 +83,13 @@ public class ClothSimInspector : Editor
             string[] options = dynamicProperties.Keys.ToArray();
 
             m_foldoutState = EditorGUILayout.BeginFoldoutHeaderGroup(m_foldoutState, "DynamicProperties");
+            EditorGUILayout.BeginHorizontal();
             int newIndex = EditorGUILayout.Popup(m_currentPropertiesIndex, options, EditorStyles.popup);
 
             DynamicPropertiesDef def = dynamicProperties[options[m_currentPropertiesIndex]];
 
+            def.RenderColour = EditorGUILayout.ColorField(def.RenderColour);
+            EditorGUILayout.EndHorizontal();
             def.Stretch = EditorGUILayout.FloatField("Stretch", def.Stretch);
             def.Compression = EditorGUILayout.FloatField("Compression", def.Compression);
             def.Push = EditorGUILayout.FloatField("Push", def.Push);

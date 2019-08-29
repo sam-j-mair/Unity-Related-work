@@ -27,6 +27,7 @@ public class Native
 
 public class ClothSimEntity : MonoBehaviour
 {
+    public Dictionary<string, Color> ConstraintColours { get; set; } = new Dictionary<string, Color>();
     public string m_scriptPath = "Scripts/test.lua";
     public string m_outputPath = "H:\\Dev Stuff\\Unity Projects\\Quad Tree experiment\\Assets\\Resources\\MoonSharp\\output.lua";
     private Dictionary<int, GameObject> m_particleEntities = new Dictionary<int, GameObject>();

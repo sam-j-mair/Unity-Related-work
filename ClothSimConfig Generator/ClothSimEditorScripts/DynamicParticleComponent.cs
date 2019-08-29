@@ -43,6 +43,7 @@ public class DynamicParticleComponent : MonoBehaviour
 
         foreach(ConstraintInfo constraintInfo in ConstraintParticles)
         {
+            Gizmos.color = constraintInfo.DynamicProperties.RenderColour;
             Gizmos.DrawLine(ParticleInfo.VertInfo.Position, constraintInfo.ConstraintParticle.transform.position);
         }
     }
@@ -58,7 +59,7 @@ public class DynamicParticleComponent : MonoBehaviour
         foreach (ConstraintInfo constraintInfo in ConstraintParticles)
         {
             if(Selected != null)
-                Gizmos.color = (Selected[index++]) ? Color.green : Color.yellow;
+                Gizmos.color = (Selected[index++]) ? constraintInfo.DynamicProperties.RenderColour : Color.yellow;
             Gizmos.DrawLine(ParticleInfo.VertInfo.Position, constraintInfo.ConstraintParticle.transform.position);
         }
     }

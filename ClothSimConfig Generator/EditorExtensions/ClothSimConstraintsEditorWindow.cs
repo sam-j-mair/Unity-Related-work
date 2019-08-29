@@ -42,7 +42,12 @@ public class ClothSimConstraintsEditorWindow : EditorWindow
                 int newIndex = EditorGUILayout.Popup(index, options, EditorStyles.popup);
 
                 if (newIndex != index)
+                {
                     def.ConstraintType = options[newIndex];
+                    DynamicPropertiesDef newDef = constraintProperties[def.ConstraintType];
+                    ConstraintInfo info = ParticleComponent.ConstraintParticles.FirstOrDefault(c => def.TargetVert == c.ConstraintParticle.ParticleInfo.VertInfo.VertID);
+                    info.DynamicProperties = newDef;
+                }
 
 
                 def.TargetVert = EditorGUILayout.IntField("Target Vert ID", def.TargetVert);

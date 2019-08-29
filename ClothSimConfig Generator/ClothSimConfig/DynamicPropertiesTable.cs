@@ -61,7 +61,7 @@ public class DynamicPropertiesTable : ILuaSerialiser
             stringBuilder.Append("            priority = " + def.Priority.ToString() + ",\n");
 
             if (!string.IsNullOrEmpty(def.VertOrder))
-                stringBuilder.Append("            vert_order = " + def.VertOrder + ",\n");
+                stringBuilder.Append("            vert_order = '" + def.VertOrder + "',\n");
 
             stringBuilder.Append("        },\n");
         }
@@ -98,5 +98,8 @@ public class DynamicPropertiesTable : ILuaSerialiser
         public float Amount { get; set; }
         public int Priority { get; set; }
         public string VertOrder = string.Empty;
+
+        //Debug
+        public Color RenderColour { get; set; } = Color.grey;
     }
 }
