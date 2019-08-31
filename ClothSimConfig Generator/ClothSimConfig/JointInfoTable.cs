@@ -14,9 +14,9 @@ public class JointInfoTable : ILuaSerialiser
     {
         public string BoneName { get; set; }
         public int PositionVertID { get; set; }
-        public int AimVertID { get;set; }
+        public int AimVertID { get; set; }
         public Vector3 UpVector { get; set; }
-        public List<int[]> VertPairs;
+        public List<int[]> VertPairs { get; set; } = new List<int[]>();
     }
 
     public void AddJointInfo(JointInfoDefinition jointInfoDefinition)
@@ -42,24 +42,27 @@ public class JointInfoTable : ILuaSerialiser
 
         foreach(JointInfoDefinition jointInfo in m_jointInfoList)
         {
-            Vector3 vec = jointInfo.UpVector;
-            stringBuilder.Append(
-                "        { bone = '" + jointInfo.BoneName +
-                "', position_vert_id = " + jointInfo.PositionVertID.ToString() +
-                " , aim_vert_id = " + jointInfo.AimVertID.ToString() +
-                " , up_vector = vec3(" + vec.x.ToString() + ", " + vec.y.ToString() + ", " + vec.z.ToString() + 
-                "), normal_vert_id = { ");
-
-            foreach(var pair in jointInfo.VertPairs)
+            if (jointInfo != null)
             {
-                stringBuilder.Append("{ ");
-                foreach (int id in pair)
+                Vector3 vec = jointInfo.UpVector;
+                stringBuilder.Append(
+                    "        { bone = '" + jointInfo.BoneName +
+                    "', position_vert_id = " + jointInfo.PositionVertID.ToString() +
+                    " , aim_vert_id = " + jointInfo.AimVertID.ToString() +
+                    " , up_vector = vec3(" + vec.x.ToString() + ", " + vec.y.ToString() + ", " + vec.z.ToString() +
+                    "), normal_vert_id = { ");
+
+                foreach (var pair in jointInfo.VertPairs)
                 {
-                    stringBuilder.Append(id.ToString() + ", ");
+                    stringBuilder.Append("{ ");
+                    foreach (int id in pair)
+                    {
+                        stringBuilder.Append(id.ToString() + ", ");
+                    }
+                    stringBuilder.Append("}, ");
                 }
-                stringBuilder.Append("}, ");
+                stringBuilder.Append("}, },\n");
             }
-            stringBuilder.Append("}, },\n");
         }
 
         stringBuilder.Append("    },\n");

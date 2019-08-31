@@ -142,6 +142,16 @@ public class ClothSimEntity : MonoBehaviour
 
     }
 
+    public void AddJointInfo(JointInfoTable.JointInfoDefinition jointInfo)
+    {
+        m_config.AddJointInfo(jointInfo);
+    }
+
+    public void RemoveJointInfo(JointInfoTable.JointInfoDefinition jointInfo)
+    {
+        m_config.RemoveJointInfo(jointInfo);
+    }
+
     public GameObject GetParticleById(int id)
     {
         GameObject gameObject;

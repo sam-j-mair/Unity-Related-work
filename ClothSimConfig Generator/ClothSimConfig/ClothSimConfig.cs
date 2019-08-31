@@ -77,9 +77,7 @@ public class ClothSimConfig
         };
 
         particleInfo.VertInfo.VertID = m_vertIDIndex++;
-
         AddVert(particleInfo.VertInfo);
-        AddJointInfo(particleInfo.JointInfo);
 
         return particleInfo;
     }
@@ -139,12 +137,12 @@ public class ClothSimConfig
         m_vertInfoTable.RemoveVertInfo(vertInfo);
     }
 
-    public void AddJointInfo(JointInfoTable.JointInfoDefinition jointInfo)
+    public void AddJointInfo(JointInfoDefinition jointInfo)
     {
         m_jointInfoTable.AddJointInfo(jointInfo);
     }
 
-    public void RemoveJointInfo(JointInfoTable.JointInfoDefinition jointInfo)
+    public void RemoveJointInfo(JointInfoDefinition jointInfo)
     {
         m_jointInfoTable.RemoveJointInfo(jointInfo);
     }

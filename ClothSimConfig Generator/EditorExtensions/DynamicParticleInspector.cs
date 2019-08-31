@@ -10,7 +10,7 @@ public class DynamincParticleInspector : Editor
     public override void OnInspectorGUI()
     {
         DynamicParticleComponent dynamicParticle = (DynamicParticleComponent)target;
-
+        ClothSimEntity clothSimEntity = dynamicParticle.ClothSimEntity;
 
         VertInfo vertInfo = dynamicParticle.ParticleInfo.VertInfo;
         JointInfoTable.JointInfoDefinition jointInfo = dynamicParticle.ParticleInfo.JointInfo;
@@ -20,6 +20,8 @@ public class DynamincParticleInspector : Editor
         vertInfo.PullToSkinScale = EditorGUILayout.FloatField("Pull To Skin Scale", vertInfo.PullToSkinScale);
         vertInfo.ColliderRadiusScale = EditorGUILayout.FloatField("Collider Radius Scale", vertInfo.ColliderRadiusScale);
         vertInfo.Position = EditorGUILayout.Vector3Field("Position", vertInfo.Position);
+
+        JointInfoDisplay(jointInfo);
 
         if (GUILayout.Button("Body Shape Editor"))
         {
@@ -38,6 +40,52 @@ public class DynamincParticleInspector : Editor
             constraintsWindow.Show();
         }
 
+        if (jointInfo == null)
+        {
+            if (GUILayout.Button("AddJointInfo"))
+            {
+                JointInfoTable.JointInfoDefinition newJointInfo = new JointInfoTable.JointInfoDefinition();
+
+                clothSimEntity.AddJointInfo(newJointInfo);
+                dynamicParticle.ParticleInfo.JointInfo = newJointInfo;
+
+            }
+        }
+        else
+        {
+            if(GUILayout.Button("RemoveJointInfo"))
+            {
+                clothSimEntity.RemoveJointInfo(jointInfo);
+                dynamicParticle.ParticleInfo.JointInfo = null;
+            }
+        }
+
     }
 
+    private static void JointInfoDisplay(JointInfoTable.JointInfoDefinition jointInfo)
+    {
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        if (jointInfo != null)
+        {
+            jointInfo.BoneName = EditorGUILayout.TextField("Joint Name", jointInfo.BoneName);
+            jointInfo.PositionVertID = EditorGUILayout.IntField("Position Vert ID", jointInfo.PositionVertID);
+            jointInfo.AimVertID = EditorGUILayout.IntField("Aim Vert ID", jointInfo.AimVertID);
+            jointInfo.UpVector = EditorGUILayout.Vector3Field("Up Vector", jointInfo.UpVector);
+
+            EditorGUILayout.LabelField("Normal Vert ID Pairs");
+            foreach (int[] pair in jointInfo.VertPairs)
+            {
+                EditorGUILayout.BeginHorizontal();
+                pair[0] = EditorGUILayout.IntField("", pair[0]);
+                pair[1] = EditorGUILayout.IntField("", pair[1]);
+                EditorGUILayout.EndHorizontal();
+            }
+
+            if (GUILayout.Button("Add Pair"))
+            {
+                jointInfo.VertPairs.Add(new int[2]);
+            }
+        }
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+    }
 }
