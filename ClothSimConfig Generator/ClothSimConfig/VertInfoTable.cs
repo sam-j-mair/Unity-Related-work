@@ -28,15 +28,15 @@ public class VertInfoTable : ILuaSerialiser
     public class VertInfo
     {
         public int VertID { get; set; }
-        public bool IsStatic { get; set; }
-        public float MassScale { get; set; }
-        public float PullToSkinScale { get; set; }
-        public float ColliderRadiusScale { get; set; }
+        public bool IsStatic { get; set; } = false;
+        public float MassScale { get; set; } = 1.0f;
+        public float PullToSkinScale { get; set; } = 0.0f;
+        public float ColliderRadiusScale { get; set; } = 1.0f;
         public Vector3 Position { get; set; }
 
-        public BodyShapeOffSetTable BodyShapeOffsetTable { get; set; }
-        public SkinWeightsTable SkinWeightsTable { get; set; }
-        public ConstraintsTable ConstraintsTable { get; set; }
+        public BodyShapeOffSetTable BodyShapeOffsetTable { get; set; } = new BodyShapeOffSetTable();
+        public SkinWeightsTable SkinWeightsTable { get; set; } = new SkinWeightsTable();
+        public ConstraintsTable ConstraintsTable { get; set; } = new ConstraintsTable();
     }
 
     public void Render()
@@ -65,13 +65,8 @@ public class VertInfoTable : ILuaSerialiser
             info.ColliderRadiusScale = (float)vertDefTable.Get("collider_radius_scale").Number;
             info.Position = vertDefTable.Get("position").ToObject<Vector3>();
 
-            info.BodyShapeOffsetTable = new BodyShapeOffSetTable();
             Debug.Assert(info.BodyShapeOffsetTable.Deserialise(vertDefTable.Get("body_shape_offset").Table));
-
-            info.SkinWeightsTable = new SkinWeightsTable();
             Debug.Assert(info.SkinWeightsTable.Deserialise(vertDefTable.Get("skin_weights").Table));
-
-            info.ConstraintsTable = new ConstraintsTable();
             Debug.Assert(info.ConstraintsTable.Deserialise(vertDefTable.Get("constraints").Table));
 
             m_vertInfoList.Add(info);

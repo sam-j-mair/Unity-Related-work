@@ -35,7 +35,6 @@ public class DynamincParticleInspector : Editor
         {
             ClothSimConstraintsEditorWindow constraintsWindow = EditorWindow.GetWindow<ClothSimConstraintsEditorWindow>();
             constraintsWindow.ParticleComponent = dynamicParticle;
-            constraintsWindow.Reset(dynamicParticle.ParticleInfo.VertInfo.ConstraintsTable.ConstraintsDefs.Count);
             constraintsWindow.Show();
         }
 

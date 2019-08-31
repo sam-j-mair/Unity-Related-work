@@ -9,8 +9,8 @@ using static DynamicPropertiesTable;
 
 public class ClothSimConstraintsEditorWindow : EditorWindow
 {
-    public DynamicParticleComponent ParticleComponent { get; set; }
     public List<bool> m_selected = new List<bool>(10);
+    private DynamicParticleComponent m_dynamicParticle;
 
     [MenuItem("Window/Constraints Editor")]
     public static void ShowWindow()
@@ -25,6 +25,8 @@ public class ClothSimConstraintsEditorWindow : EditorWindow
             GUILayout.Label("Cloth Simulation Constraints for VertID " + ParticleComponent.name, EditorStyles.boldLabel);
             ClothSimEntity clothSimEntity = ParticleComponent.ClothSimEntity;
             Dictionary<string, DynamicPropertiesDef> constraintProperties = clothSimEntity.GetConstraintDefinitions();
+            Event currentEvent = Event.current;
+
 
             List<ConstraintInfo> constraintInfo = ParticleComponent.ConstraintParticles;
             List<ConstraintDef> defs = ParticleComponent.ParticleInfo.VertInfo.ConstraintsTable.ConstraintsDefs;
@@ -88,7 +90,7 @@ public class ClothSimConstraintsEditorWindow : EditorWindow
 
                     ConstraintDef def = new ConstraintDef
                     {
-                        ConstraintType = options[0],
+                        ConstraintType = options.Count() > 0 ? options[0] : "Invalid",
                         TargetVert = dynamicParticle.ParticleInfo.VertInfo.VertID
                     };
 
@@ -141,5 +143,15 @@ public class ClothSimConstraintsEditorWindow : EditorWindow
 
         for (int i = 0; i < count; ++i)
             m_selected.Add(false);
+    }
+
+    public DynamicParticleComponent ParticleComponent
+    {
+        get { return m_dynamicParticle; }
+        set
+        {
+            m_dynamicParticle = value;
+            Reset(m_dynamicParticle.ParticleInfo.VertInfo.ConstraintsTable.ConstraintsDefs.Count);
+        }
     }
 }

@@ -30,10 +30,10 @@ public class ClothSimEntity : MonoBehaviour
     public Dictionary<string, Color> ConstraintColours { get; set; } = new Dictionary<string, Color>();
     public string m_scriptPath = "Scripts/test.lua";
     public string m_outputPath = "H:\\Dev Stuff\\Unity Projects\\Quad Tree experiment\\Assets\\Resources\\MoonSharp\\output.lua";
-    private Dictionary<int, GameObject> m_particleEntities = new Dictionary<int, GameObject>();
 
+    private Dictionary<int, GameObject> m_particleEntities = new Dictionary<int, GameObject>();
     private ClothSimConfig m_config = new ClothSimConfig();
-    Script m_luaScript = new Script();
+    private Script m_luaScript = new Script();
 
     public ClothSimConfig ClothConfig { get; set; }
 
@@ -52,26 +52,31 @@ public class ClothSimEntity : MonoBehaviour
     {
         GameObject gameObject = new GameObject();
         DynamicParticleComponent particle = gameObject.AddComponent<DynamicParticleComponent>();
+        particle.ParticleInfo = m_config.CreateNewParticle();
 
-        gameObject.name = "Particle VertID : ";
-
-        particle.ParticleInfo = new ParticleInfo
-        {
-            VertInfo = new VertInfoTable.VertInfo(),
-            JointInfo = new JointInfoTable.JointInfoDefinition()
-        };
-
-        m_config.AddVert(particle.ParticleInfo.VertInfo);
-        m_config.AddJointInfo(particle.ParticleInfo.JointInfo);
-
-        gameObject.transform.parent = this.transform;
-
+        gameObject.name = "Particle VertID : " + particle.ParticleInfo.VertInfo.VertID.ToString();
+        
+        particle.ClothSimEntity = this;
+        particle.ConstraintParticles = new List<DynamicParticleComponent.ConstraintInfo>();
+        gameObject.transform.parent = transform;
         m_particleEntities.Add(particle.ParticleInfo.VertInfo.VertID, gameObject);
+    }
+
+    public void ClearEntities()
+    {
+        foreach(KeyValuePair<int, GameObject> kvp in m_particleEntities)
+        {
+            Destroy(kvp.Value);
+        }
+
+        m_particleEntities.Clear();
     }
 
     public void GenerateFromConfig()
     {
         List<ParticleInfo> particleInfo = m_config.GenerateFromConfig();
+
+        ClearEntities();
 
         foreach (ParticleInfo info in particleInfo)
         {

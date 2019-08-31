@@ -33,11 +33,12 @@ public class ClothSimConfig
 {
     public ConfigValues m_configValues = new ConfigValues();
 
-    VertOrdersTable m_vertOrders = new VertOrdersTable();
-    DynamicPropertiesTable m_propertiesTable = new DynamicPropertiesTable();
-    VertInfoTable m_vertInfoTable = new VertInfoTable();
-    JointInfoTable m_jointInfoTable = new JointInfoTable();
-    CollisionInfoTable m_collisionInfoTable = new CollisionInfoTable();
+    private VertOrdersTable m_vertOrders = new VertOrdersTable();
+    private DynamicPropertiesTable m_propertiesTable = new DynamicPropertiesTable();
+    private VertInfoTable m_vertInfoTable = new VertInfoTable();
+    private JointInfoTable m_jointInfoTable = new JointInfoTable();
+    private CollisionInfoTable m_collisionInfoTable = new CollisionInfoTable();
+    private int m_vertIDIndex = 0;
 
     static ClothSimConfig()
     {
@@ -65,6 +66,22 @@ public class ClothSimConfig
                 return dynVal;
             }
         );
+    }
+
+    public ParticleInfo CreateNewParticle()
+    {
+        ParticleInfo particleInfo = new ParticleInfo
+        {
+            ConfigValues = m_configValues,
+            VertInfo = new VertInfo(),
+        };
+
+        particleInfo.VertInfo.VertID = m_vertIDIndex++;
+
+        AddVert(particleInfo.VertInfo);
+        AddJointInfo(particleInfo.JointInfo);
+
+        return particleInfo;
     }
 
     public List<ParticleInfo> GenerateFromConfig()
@@ -161,6 +178,8 @@ public class ClothSimConfig
         Debug.Assert(m_vertInfoTable.Deserialise(dynamicMesh.Get("vert_info").Table), "error in the dynamic properties table.");
         Debug.Assert(m_jointInfoTable.Deserialise(dynamicMesh.Get("joint_info").Table), "error in the jointInfo table.");
         Debug.Assert(m_collisionInfoTable.Deserialise(dynamicMesh.Get("collision_info").Table), "error in the collision_info");
+
+        m_vertIDIndex = m_vertInfoTable.VertInfoList.Count;
 
         return success;
     }

@@ -7,13 +7,7 @@ using UnityEngine;
 public class ConstraintsTable : ILuaSerialiser
 {
     List<ConstraintDef> m_constraintsList = new List<ConstraintDef>();
-    public List<ConstraintDef> ConstraintsDefs { get; private set; }
-
-    public ConstraintsTable()
-    {
-        ConstraintsDefs = m_constraintsList;
-    }
-
+    
     public class ConstraintDef
     {
         public string ConstraintType { get; set; }
@@ -54,5 +48,10 @@ public class ConstraintsTable : ILuaSerialiser
         success = true;
 
         return success;
+    }
+
+    public List<ConstraintDef> ConstraintsDefs
+    {
+        get { return m_constraintsList; }
     }
 }

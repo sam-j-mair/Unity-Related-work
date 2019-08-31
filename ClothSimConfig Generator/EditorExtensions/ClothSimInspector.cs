@@ -10,6 +10,8 @@ public class ClothSimInspector : Editor
 {
     bool m_foldoutState = false;
     int m_currentPropertiesIndex = 0;
+
+    [Header("Constraints Definitions")]
     string m_newProperiesName = "";
     int m_selectedVertOrderIndex = 0;
 
@@ -17,6 +19,7 @@ public class ClothSimInspector : Editor
     {
         ClothSimEntity clothSimEntity = (ClothSimEntity)target;
         ClothSimConfig config = clothSimEntity.ClothConfig;
+        Event currentEvent = Event.current;
 
         if (config != null)
         {
@@ -32,6 +35,7 @@ public class ClothSimInspector : Editor
 
         DynamicPropertiesDisplay(clothSimEntity);
 
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Load"))
         {
@@ -39,7 +43,23 @@ public class ClothSimInspector : Editor
             clothSimEntity.LoadConfiguration();
         }
 
-        if (GUILayout.Button("Save"))
+        if(GUILayout.Button("Save"))
+        {
+            string savePath = clothSimEntity.m_scriptPath;
+            if (!string.IsNullOrEmpty(savePath))
+            {
+                clothSimEntity.m_outputPath = savePath;
+                clothSimEntity.SaveConfiguration();
+                EditorUtility.DisplayDialog("Attention", "Config Saved", "Ok");
+            }
+            else
+            {
+                clothSimEntity.m_outputPath = EditorUtility.SaveFilePanel("Save", "/Assets/Scenes/ClothSimConfig Generator", "output", "lua");
+                clothSimEntity.SaveConfiguration();
+            }
+        }
+
+        if (GUILayout.Button("SaveAs"))
         {
             clothSimEntity.m_outputPath = EditorUtility.SaveFilePanel("Save", "/Assets/Scenes/ClothSimConfig Generator", "output", "lua");
             clothSimEntity.SaveConfiguration();
@@ -47,7 +67,7 @@ public class ClothSimInspector : Editor
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Create New Patricle"))
+        if (GUILayout.Button("Create New Patricle") || (currentEvent.keyCode == KeyCode.N && currentEvent.type == EventType.KeyUp))
         {
             clothSimEntity.CreateParticle();
         }
@@ -59,10 +79,10 @@ public class ClothSimInspector : Editor
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Generate From Config"))
-        {
-            clothSimEntity.GenerateFromConfig();
-        }
+        //if (GUILayout.Button("Generate From Config"))
+        //{
+        //    clothSimEntity.GenerateFromConfig();
+        //}
 
         if (GUILayout.Button("Generate From Mesh"))
         {
@@ -78,9 +98,11 @@ public class ClothSimInspector : Editor
     {
         Dictionary<string, DynamicPropertiesDef> dynamicProperties = clothSimEntity.GetConstraintDefinitions();
 
+        string[] options = new string[0];
+
         if (dynamicProperties.Count > 0)
         {
-            string[] options = dynamicProperties.Keys.ToArray();
+            options = dynamicProperties.Keys.ToArray();
 
             m_foldoutState = EditorGUILayout.BeginFoldoutHeaderGroup(m_foldoutState, "DynamicProperties");
             EditorGUILayout.BeginHorizontal();
@@ -104,36 +126,42 @@ public class ClothSimInspector : Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("VertOrder");
             m_selectedVertOrderIndex = EditorGUILayout.Popup(m_selectedVertOrderIndex, vertOrders);
-            def.VertOrder = vertOrders[m_selectedVertOrderIndex];
+            def.VertOrder = vertOrders.Count() > 0 ? vertOrders[m_selectedVertOrderIndex] : "";
             EditorGUILayout.EndHorizontal();
 
             m_currentPropertiesIndex = (newIndex != m_currentPropertiesIndex) ? newIndex : m_currentPropertiesIndex;
+        }
 
-            EditorGUILayout.BeginHorizontal();
-            m_newProperiesName = EditorGUILayout.TextField("Name", m_newProperiesName);
-            string errorString = "";
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        EditorGUILayout.LabelField("Dynamic Properties");
+        EditorGUILayout.BeginHorizontal();
+        m_newProperiesName = EditorGUILayout.TextField("Name", m_newProperiesName);
+        string errorString = "";
 
-            if (GUILayout.Button("Create"))
+        if (GUILayout.Button("Create"))
+        {
+            if(dynamicProperties.TryGetValue(m_newProperiesName, out DynamicPropertiesDef propDef))
             {
-                if(dynamicProperties.TryGetValue(m_newProperiesName, out DynamicPropertiesDef propDef))
-                {
-                    errorString = "ERROR: This name already exists. The name needs to be unique.";
-                }
-                else
-                {
-                    dynamicProperties.Add(m_newProperiesName, new DynamicPropertiesDef());
-                }
+                errorString = "ERROR: This name already exists. The name needs to be unique.";
             }
+            else
+            {
+                dynamicProperties.Add(m_newProperiesName, new DynamicPropertiesDef());
+            }
+        }
 
+        if (options.Count() > 0)
+        {
             if (GUILayout.Button("Delete"))
             {
                 dynamicProperties.Remove(options[m_currentPropertiesIndex]);
             }
-
-            EditorGUILayout.TextField("", errorString);
-
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndFoldoutHeaderGroup();
         }
+
+        EditorGUILayout.TextField("", errorString);
+
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndFoldoutHeaderGroup();
+        
     }
 }

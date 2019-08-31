@@ -15,8 +15,6 @@ public class DynamicParticleComponent : MonoBehaviour
     public List<ConstraintInfo> ConstraintParticles { get; set; }
     public List<bool> Selected { get; set; }
 
-    
-
     public class ConstraintInfo
     {
         public DynamicPropertiesTable.DynamicPropertiesDef DynamicProperties { get; set; }
@@ -43,7 +41,7 @@ public class DynamicParticleComponent : MonoBehaviour
 
         foreach(ConstraintInfo constraintInfo in ConstraintParticles)
         {
-            Gizmos.color = constraintInfo.DynamicProperties.RenderColour;
+            Gizmos.color = constraintInfo.DynamicProperties != null ? constraintInfo.DynamicProperties.RenderColour : Color.grey;
             Gizmos.DrawLine(ParticleInfo.VertInfo.Position, constraintInfo.ConstraintParticle.transform.position);
         }
     }
