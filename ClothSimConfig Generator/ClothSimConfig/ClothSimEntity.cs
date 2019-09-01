@@ -9,6 +9,8 @@ using UnityEditor;
 using static ClothSimConfig;
 using static ConstraintsTable;
 using static DynamicPropertiesTable;
+using static VertInfoTable;
+using System.Linq;
 
 [MoonSharpUserData]
 public class Native
@@ -40,6 +42,7 @@ public class ClothSimEntity : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        name = "ClothRoot";
         UserData.RegisterAssembly();
         
         m_luaScript.Options.ScriptLoader = new FileSystemScriptLoader();
@@ -88,7 +91,7 @@ public class ClothSimEntity : MonoBehaviour
             particle.ParticleInfo = info;
 
             m_particleEntities.Add(info.VertInfo.VertID, gameObject);
-            gameObject.transform.SetParent(this.gameObject.transform);
+            gameObject.transform.SetParent(transform);
         }
 
         foreach(GameObject gameObject in m_particleEntities.Values)
@@ -115,20 +118,35 @@ public class ClothSimEntity : MonoBehaviour
         
     }
 
-    public void DeleteParticles(GameObject[] gameObjects)
+    public void DeleteParticle(GameObject particleObject)
     {
-        foreach (GameObject gameObject in gameObjects)
+        if (m_particleEntities.ContainsValue(particleObject))
         {
-            if (m_particleEntities.ContainsValue(gameObject))
+            DynamicParticleComponent particle = particleObject.GetComponent<DynamicParticleComponent>();
+            int vertID = particle.ParticleInfo.VertInfo.VertID;
+            m_config.RemoveVert(particle.ParticleInfo.VertInfo);
+            m_config.RemoveJointInfo(particle.ParticleInfo.JointInfo);
+
+            //we search for any particles that have constraints to this particle.
+            List<VertInfo> constrainedParticles = m_config.GetConstrainedParticles(vertID);
+
+            foreach(VertInfo constrainedParticle in constrainedParticles)
             {
-                DynamicParticleComponent particle = gameObject.GetComponent<DynamicParticleComponent>();
-                m_config.RemoveVert(particle.ParticleInfo.VertInfo);
-                m_config.RemoveJointInfo(particle.ParticleInfo.JointInfo);
-
-                m_particleEntities.Remove(particle.ParticleInfo.VertInfo.VertID);
-
-                Destroy(gameObject);
+                if(m_particleEntities.TryGetValue(constrainedParticle.VertID, out GameObject particleEntity))
+                {
+                    DynamicParticleComponent p = particleEntity.GetComponent<DynamicParticleComponent>();
+                    p.ConstraintParticles.Remove(p.ConstraintParticles.FirstOrDefault(cp => cp.ConstraintParticle.ParticleInfo.VertInfo.VertID == vertID));
+                }
             }
+
+            foreach(VertInfo vertInfo in constrainedParticles)
+            {
+                vertInfo.ConstraintsTable.ConstraintsDefs.Remove(vertInfo.ConstraintsTable.ConstraintsDefs.First(c => c.TargetVert == vertID));
+            }
+
+            m_particleEntities.Remove(particle.ParticleInfo.VertInfo.VertID);
+
+            Destroy(particleObject);
         }
     }
 

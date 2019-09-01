@@ -60,6 +60,10 @@ public class DynamincParticleInspector : Editor
             }
         }
 
+        if (GUILayout.Button("Delete Patricle"))
+        {
+            clothSimEntity.DeleteParticle(dynamicParticle.gameObject);
+        }
     }
 
     private static void JointInfoDisplay(JointInfoTable.JointInfoDefinition jointInfo)

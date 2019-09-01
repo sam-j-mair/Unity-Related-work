@@ -9,6 +9,7 @@ using System;
 using static VertInfoTable;
 using static JointInfoTable;
 using static DynamicPropertiesTable;
+using System.Linq;
 
 [System.Serializable]
 public class ConfigValues
@@ -137,6 +138,11 @@ public class ClothSimConfig
         m_vertInfoTable.RemoveVertInfo(vertInfo);
     }
 
+    public List<VertInfo> GetConstrainedParticles(int vertID)
+    {
+        return m_vertInfoTable.VertInfoList.Where(p => p.ConstraintsTable.ConstraintsDefs.Any(c => c.TargetVert == vertID)).ToList();
+    }
+
     public void AddJointInfo(JointInfoDefinition jointInfo)
     {
         m_jointInfoTable.AddJointInfo(jointInfo);
@@ -149,13 +155,7 @@ public class ClothSimConfig
 
     public void Render()
     {
-        /*
-        foreach (VertInfoTable.VertInfo info in m_vertInfoTable.VertInfoList)
-        {
-            Handles.Label(info.Position, info.VertID.ToString());
-            Gizmos.DrawWireSphere(info.Position, 0.01f);
-        }
-        */
+        
     }
 
     public bool Deserialise(Script config)

@@ -71,18 +71,9 @@ public class ClothSimInspector : Editor
         {
             clothSimEntity.CreateParticle();
         }
-
-        if (GUILayout.Button("Delete Patricles"))
-        {
-            clothSimEntity.DeleteParticles(Selection.gameObjects);
-        }
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
-        //if (GUILayout.Button("Generate From Config"))
-        //{
-        //    clothSimEntity.GenerateFromConfig();
-        //}
 
         if (GUILayout.Button("Generate From Mesh"))
         {
