@@ -99,11 +99,7 @@ public class ClothSimConfig
 
             //if a joint info doesn't exist just create a new one and add it to the list
             bool exists = (jointInfo != null);
-            pInfo.JointInfo = exists ? jointInfo : new JointInfoDefinition();
-
-            if (!exists)
-                m_jointInfoTable.AddJointInfo(pInfo.JointInfo);
-
+            pInfo.JointInfo = exists ? jointInfo : null;
             particleInfo.Add(pInfo);
         }
 
