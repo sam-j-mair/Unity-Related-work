@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class CollisionInfoTable : ILuaSerialiser
 {
-    List<CollisionInfoDefinition> m_collisionInfoList = new List<CollisionInfoDefinition>();
+    public List<CollisionInfoDefinition> CollisionInfoList { get; set; } = new List<CollisionInfoDefinition>();
 
     public class CollisionInfoDefinition
     {
@@ -87,7 +87,7 @@ public class CollisionInfoTable : ILuaSerialiser
 
         stringBuilder.Append("    collision_info = {\n");
 
-        foreach(CollisionInfoDefinition def in m_collisionInfoList)
+        foreach(CollisionInfoDefinition def in CollisionInfoList)
         {
             stringBuilder.Append("        { ");
 
@@ -139,7 +139,7 @@ public class CollisionInfoTable : ILuaSerialiser
             Table bodyShapeOffsetTable = entryValue.Get("body_shape_offset").Table;
             def.BodyShapeOffSets.Deserialise(bodyShapeOffsetTable);
 
-            m_collisionInfoList.Add(def);
+            CollisionInfoList.Add(def);
         }
 
         success = true;

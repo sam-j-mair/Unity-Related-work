@@ -27,6 +27,25 @@ public class Native
     }
 }
 
+public static class ExtensionMethods
+{
+    //Breadth-first search
+    public static Transform FindRecursive(this Transform aParent, string aName)
+    {
+        Queue<Transform> queue = new Queue<Transform>();
+        queue.Enqueue(aParent);
+        while (queue.Count > 0)
+        {
+            var c = queue.Dequeue();
+            if (c.name.ToLower() == aName)
+                return c;
+            foreach (Transform t in c)
+                queue.Enqueue(t);
+        }
+        return null;
+    }
+}
+
 public class ClothSimEntity : MonoBehaviour
 {
     public Dictionary<string, Color> ConstraintColours { get; set; } = new Dictionary<string, Color>();
@@ -34,6 +53,7 @@ public class ClothSimEntity : MonoBehaviour
     public string m_outputPath = "H:\\Dev Stuff\\Unity Projects\\Quad Tree experiment\\Assets\\Resources\\MoonSharp\\output.lua";
 
     private Dictionary<int, GameObject> m_particleEntities = new Dictionary<int, GameObject>();
+    private Dictionary<string, GameObject> m_collisionEntities = new Dictionary<string, GameObject>();
     private ClothSimConfig m_config = new ClothSimConfig();
     private Script m_luaScript = new Script();
 
@@ -81,6 +101,10 @@ public class ClothSimEntity : MonoBehaviour
 
         ClearEntities();
 
+        GameObject rootParticle = new GameObject();
+        rootParticle.name = "Particles";
+        rootParticle.transform.SetParent(transform);
+
         foreach (ParticleInfo info in particleInfo)
         {
             GameObject gameObject = new GameObject();
@@ -91,7 +115,7 @@ public class ClothSimEntity : MonoBehaviour
             particle.ParticleInfo = info;
 
             m_particleEntities.Add(info.VertInfo.VertID, gameObject);
-            gameObject.transform.SetParent(transform);
+            gameObject.transform.SetParent(rootParticle.transform);
         }
 
         foreach(GameObject gameObject in m_particleEntities.Values)
@@ -115,7 +139,43 @@ public class ClothSimEntity : MonoBehaviour
                 }
             }
         }
-        
+    }
+
+    public void GenerateCollisionFromConfig()
+    {
+        List<CollisionInfo> collisionInfo = m_config.GenerateCollisionFromConfig();
+        GameObject rootCollision = new GameObject();
+        rootCollision.name = "Collision";
+        rootCollision.transform.SetParent(transform);
+
+        foreach(CollisionInfo info in collisionInfo)
+        {
+            GameObject gameObject = new GameObject();
+            DynamicCollisionComponent collision = gameObject.AddComponent<DynamicCollisionComponent>();
+            gameObject.name = "Collision Name : " + info.CollisionInfoDefinition.Name;
+
+            collision.ClothSimEntity = this;
+            collision.CollisionInfo = info;
+
+            m_collisionEntities.Add(info.CollisionInfoDefinition.Name, gameObject);
+            gameObject.transform.SetParent(transform);
+
+
+            Transform boneTransform = transform.FindRecursive(info.CollisionInfoDefinition.BoneName.ToLower());
+            //Debug.Assert(boneTransform != null, "This bone " + info.CollisionInfoDefinition.BoneName + " doesn't exist!!");
+            
+
+            if (boneTransform != null)
+            {
+                gameObject.transform.SetParent(boneTransform);
+                gameObject.transform.position = boneTransform.position;
+
+                gameObject.transform.localPosition = info.CollisionInfoDefinition.PositionOffset;
+                gameObject.transform.localEulerAngles = info.CollisionInfoDefinition.RotationOffset;
+            }
+
+            gameObject.transform.SetParent(rootCollision.transform);
+        }
     }
 
     public void DeleteParticle(GameObject particleObject)

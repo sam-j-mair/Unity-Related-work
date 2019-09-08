@@ -10,6 +10,7 @@ using static VertInfoTable;
 using static JointInfoTable;
 using static DynamicPropertiesTable;
 using System.Linq;
+using static CollisionInfoTable;
 
 [System.Serializable]
 public class ConfigValues
@@ -28,6 +29,12 @@ public class ParticleInfo
     public ConfigValues ConfigValues { get; set; }
     public VertInfo VertInfo { get; set; }
     public JointInfoDefinition JointInfo { get; set; }
+}
+
+[System.Serializable]
+public class CollisionInfo
+{
+    public CollisionInfoDefinition CollisionInfoDefinition { get; set; }
 }
 //this is the dynamic mesh
 public class ClothSimConfig
@@ -104,6 +111,21 @@ public class ClothSimConfig
         }
 
         return particleInfo;
+    }
+
+    public List<CollisionInfo> GenerateCollisionFromConfig()
+    {
+        List<CollisionInfo> collisionInfo = new List<CollisionInfo>();
+
+        foreach(CollisionInfoDefinition def in m_collisionInfoTable.CollisionInfoList)
+        {
+            collisionInfo.Add(new CollisionInfo
+            {
+                CollisionInfoDefinition = def
+            });
+        }
+
+        return collisionInfo;
     }
 
     public DynamicPropertiesDef GetDynamicPropertiesDef(string name)

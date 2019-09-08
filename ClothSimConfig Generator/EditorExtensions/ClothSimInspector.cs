@@ -66,6 +66,11 @@ public class ClothSimInspector : Editor
         }
         EditorGUILayout.EndHorizontal();
 
+        if (GUILayout.Button("Generate Collision From Config"))
+        {
+            clothSimEntity.GenerateCollisionFromConfig();
+        }
+
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Create New Patricle") || (currentEvent.keyCode == KeyCode.N && currentEvent.type == EventType.KeyUp))
         {
