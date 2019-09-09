@@ -23,17 +23,20 @@ public class VertOrdersTable
     {
         bool success = false;
 
-        foreach (TablePair pair in vertOrdersTable.Pairs)
+        if(vertOrdersTable != null)
         {
-            string name = pair.Key.String;
-            Table vertOrder = pair.Value.Table;
-
-            List<int> orderList = new List<int>();
-            m_vertOrders.Add(name, orderList);
-
-            foreach (DynValue value in vertOrder.Values)
+            foreach (TablePair pair in vertOrdersTable.Pairs)
             {
-                orderList.Add((int)value.Number);
+                string name = pair.Key.String;
+                Table vertOrder = pair.Value.Table;
+
+                List<int> orderList = new List<int>();
+                m_vertOrders.Add(name, orderList);
+
+                foreach (DynValue value in vertOrder.Values)
+                {
+                    orderList.Add((int)value.Number);
+                }
             }
         }
 
