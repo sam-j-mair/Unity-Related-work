@@ -75,7 +75,7 @@ public class ClothSimEntity : MonoBehaviour
         ClothConfig = m_config;
     }
 
-    public void CreateParticle()
+    public GameObject CreateParticle()
     {
         GameObject gameObject = new GameObject();
         DynamicParticleComponent particle = gameObject.AddComponent<DynamicParticleComponent>();
@@ -87,6 +87,8 @@ public class ClothSimEntity : MonoBehaviour
         particle.ConstraintParticles = new List<DynamicParticleComponent.ConstraintInfo>();
         gameObject.transform.parent = transform;
         m_particleEntities.Add(particle.ParticleInfo.VertInfo.VertID, gameObject);
+
+        return gameObject;
     }
 
     public void ClearEntities()
@@ -192,7 +194,6 @@ public class ClothSimEntity : MonoBehaviour
             Transform boneTransform = transform.FindRecursive(info.CollisionInfoDefinition.BoneName.ToLower());
             //Debug.Assert(boneTransform != null, "This bone " + info.CollisionInfoDefinition.BoneName + " doesn't exist!!");
             
-
             if (boneTransform != null)
             {
                 gameObject.transform.SetParent(boneTransform);
@@ -203,6 +204,23 @@ public class ClothSimEntity : MonoBehaviour
             }
 
             gameObject.transform.SetParent(rootCollision.transform);
+        }
+    }
+
+    public void GenerateFromMesh(string meshPath)
+    {
+        GameObject meshObject = AssetDatabase.LoadAssetAtPath<GameObject>(meshPath);
+        MeshFilter selectedMeshFilter = meshObject.GetComponent<MeshFilter>();
+        Mesh mesh = selectedMeshFilter.sharedMesh;
+        Vector3[] vertices = mesh.vertices;
+
+        for (var i = 0; i < vertices.Length; i++)
+        {
+            Vector3 pos = vertices[i];
+            GameObject gameObject = CreateParticle();
+            DynamicParticleComponent particle = gameObject.GetComponent<DynamicParticleComponent>();
+            particle.ParticleInfo.VertInfo.Position = pos;
+            particle.ParticleInfo.VertInfo.ColliderRadiusScale = 0.01f;
         }
     }
 

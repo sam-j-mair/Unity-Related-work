@@ -99,12 +99,12 @@ public class ClothSimInspector : Editor
 
         if (GUILayout.Button("Generate From Mesh"))
         {
+            Uri absolutePath = new Uri(EditorUtility.OpenFilePanel("Open", "/Resourses/Models", "FBX"));
+            Uri assetsPath = new Uri(Application.dataPath);
 
-
+            clothSimEntity.GenerateFromMesh(assetsPath.MakeRelativeUri(absolutePath).ToString());
         }
         EditorGUILayout.EndHorizontal();
-
-
     }
 
     private void DynamicPropertiesDisplay(ClothSimEntity clothSimEntity)
