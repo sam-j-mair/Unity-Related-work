@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -20,6 +21,22 @@ public class ClothSimInspector : Editor
         ClothSimEntity clothSimEntity = (ClothSimEntity)target;
         ClothSimConfig config = clothSimEntity.ClothConfig;
         Event currentEvent = Event.current;
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        EditorGUILayout.TextField("Model Path", clothSimEntity.ModelPath);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Browse"))
+        {
+            Uri absolutePath = new Uri(EditorUtility.OpenFilePanel("Open", "/Resourses/Models", "FBX"));
+            Uri assetsPath = new Uri(Application.dataPath);
+            clothSimEntity.ModelPath = assetsPath.MakeRelativeUri(absolutePath).ToString();
+        }
+        if (GUILayout.Button("Load"))
+        {
+            clothSimEntity.LoadModel();
+        }
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
         if (config != null)
         {

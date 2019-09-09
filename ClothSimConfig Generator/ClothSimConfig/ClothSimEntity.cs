@@ -11,6 +11,7 @@ using static ConstraintsTable;
 using static DynamicPropertiesTable;
 using static VertInfoTable;
 using System.Linq;
+using System;
 
 [MoonSharpUserData]
 public class Native
@@ -49,8 +50,10 @@ public static class ExtensionMethods
 public class ClothSimEntity : MonoBehaviour
 {
     public Dictionary<string, Color> ConstraintColours { get; set; } = new Dictionary<string, Color>();
-    public string m_scriptPath = "Scripts/test.lua";
-    public string m_outputPath = "H:\\Dev Stuff\\Unity Projects\\Quad Tree experiment\\Assets\\Resources\\MoonSharp\\output.lua";
+    public string m_scriptPath = "";
+    public string m_outputPath = "";
+    public string ModelPath { get; set; } = "";
+    private GameObject m_model = null;
 
     private Dictionary<int, GameObject> m_particleEntities = new Dictionary<int, GameObject>();
     private Dictionary<string, GameObject> m_collisionEntities = new Dictionary<string, GameObject>();
@@ -63,6 +66,7 @@ public class ClothSimEntity : MonoBehaviour
     void Start()
     {
         name = "ClothRoot";
+        transform.position = Vector3.zero;
         UserData.RegisterAssembly();
         
         m_luaScript.Options.ScriptLoader = new FileSystemScriptLoader();
@@ -95,14 +99,35 @@ public class ClothSimEntity : MonoBehaviour
         m_particleEntities.Clear();
     }
 
+    public void LoadModel()
+    {
+        if(m_model != null)
+        {
+            DestroyImmediate(m_model);
+            m_model = null;
+        }
+
+        GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(ModelPath);
+        m_model = Instantiate(asset);
+
+        if (m_model != null)
+        {
+            m_model.transform.position = Vector3.zero;
+            m_model.transform.SetParent(transform);
+        }
+    }
+
     public void GenerateFromConfig()
     {
+        LoadModel();
+
         List<ParticleInfo> particleInfo = m_config.GenerateFromConfig();
 
         ClearEntities();
 
         GameObject rootParticle = new GameObject();
         rootParticle.name = "Particles";
+        rootParticle.transform.position = Vector3.zero;
         rootParticle.transform.SetParent(transform);
 
         foreach (ParticleInfo info in particleInfo)
@@ -139,6 +164,8 @@ public class ClothSimEntity : MonoBehaviour
                 }
             }
         }
+
+        GenerateCollisionFromConfig();
     }
 
     public void GenerateCollisionFromConfig()
@@ -146,6 +173,7 @@ public class ClothSimEntity : MonoBehaviour
         List<CollisionInfo> collisionInfo = m_config.GenerateCollisionFromConfig();
         GameObject rootCollision = new GameObject();
         rootCollision.name = "Collision";
+        rootCollision.transform.position = Vector3.zero;
         rootCollision.transform.SetParent(transform);
 
         foreach(CollisionInfo info in collisionInfo)

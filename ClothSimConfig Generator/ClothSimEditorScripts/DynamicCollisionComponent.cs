@@ -21,11 +21,19 @@ public class DynamicCollisionComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CollisionInfo.CollisionInfoDefinition.PositionOffset = transform.position - transform.localPosition;
+        transform.localPosition = CollisionInfo.CollisionInfoDefinition.PositionOffset;
+        transform.localEulerAngles = CollisionInfo.CollisionInfoDefinition.RotationOffset;
     }
 
     private void OnDrawGizmos()
     {
+        Gizmos.color = Color.white;
+        m_drawFunc?.Invoke();
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
         m_drawFunc?.Invoke();
     }
 
@@ -39,7 +47,7 @@ public class DynamicCollisionComponent : MonoBehaviour
         Vector3 to = pos + (up * (halfLength + radius));
         Vector3 from = pos - (up * (halfLength + radius));
 
-        DebugExtension.DrawCapsule(to, from, CollisionInfo.CollisionInfoDefinition.Radius);
+        DebugExtension.DrawCapsule(to, from, Gizmos.color, CollisionInfo.CollisionInfoDefinition.Radius);
     }
 
     private void DrawShpere()

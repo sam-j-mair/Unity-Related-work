@@ -18,7 +18,6 @@ using System.Collections.Generic;
                 PopulateChildren();
             }
 
-
             foreach (Transform child in childNodes)
             {
                 if (child == rootNode)
@@ -34,7 +33,6 @@ using System.Collections.Generic;
                     Gizmos.DrawCube(child.position, new Vector3(.01f, .01f, .01f));
                 }
             }
-
         }
     }
 
