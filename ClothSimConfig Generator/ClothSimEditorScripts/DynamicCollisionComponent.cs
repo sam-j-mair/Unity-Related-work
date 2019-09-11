@@ -21,8 +21,9 @@ public class DynamicCollisionComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.localPosition = CollisionInfo.CollisionInfoDefinition.PositionOffset;
-        transform.localEulerAngles = CollisionInfo.CollisionInfoDefinition.RotationOffset;
+        //CollisionInfo.CollisionInfoDefinition.PositionOffset = pra transform.position 
+        //CollisionInfo.CollisionInfoDefinition.PositionOffset = transform.localPosition;  //= (transform.position - transform.parent.position);
+        //CollisionInfo.CollisionInfoDefinition.RotationOffset = transform.localEulerAngles; // = (transform.rotation.eulerAngles - transform.parent.rotation.eulerAngles);
     }
 
     private void OnDrawGizmos()
@@ -52,8 +53,6 @@ public class DynamicCollisionComponent : MonoBehaviour
 
     private void DrawShpere()
     {
-
+        Gizmos.DrawWireSphere(transform.position, CollisionInfo.CollisionInfoDefinition.Radius);
     }
-
-    
 }
