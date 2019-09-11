@@ -56,6 +56,11 @@ public class ClothSimInspector : Editor
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Load"))
         {
+            Uri absolutePath = new Uri(EditorUtility.OpenFilePanel("Open", "/Resourses/Models", "FBX"));
+            Uri assetsPath = new Uri(Application.dataPath);
+            clothSimEntity.ModelPath = assetsPath.MakeRelativeUri(absolutePath).ToString();
+            clothSimEntity.LoadModel();
+
             clothSimEntity.m_scriptPath = EditorUtility.OpenFilePanel("Open", "/Assets/Scenes/ClothSimConfig Generator", "lua");
             clothSimEntity.LoadConfiguration();
         }
