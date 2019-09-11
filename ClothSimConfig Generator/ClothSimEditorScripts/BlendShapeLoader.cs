@@ -24,6 +24,7 @@ public class BlendShapeLoader : MonoBehaviour
             blendShapeModel = Instantiate(asset);
             blendShapeModel.transform.position = Vector3.zero;
             blendShapeModel.SetActive(false);
+            blendShapeModel.hideFlags = HideFlags.HideInHierarchy;
             BlendShapes.Add(Path.GetFileNameWithoutExtension(filePath).TrimEnd('_'), blendShapeModel);
         }
     }

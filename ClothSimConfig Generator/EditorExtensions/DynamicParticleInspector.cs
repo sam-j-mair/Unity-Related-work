@@ -9,6 +9,7 @@ using static VertInfoTable;
 public class DynamincParticleInspector : Editor
 {
     int m_currentOffsetsIndex = 0;
+    bool m_isEditMode = false;
 
     public override void OnInspectorGUI()
     {
@@ -68,6 +69,8 @@ public class DynamincParticleInspector : Editor
         {
             clothSimEntity.DeleteParticle(dynamicParticle.gameObject);
         }
+
+        BlendShapeEditor(clothSimEntity, dynamicParticle, dynamicParticle.ParticleInfo.VertInfo.BodyShapeOffsetTable);
     }
 
     private void JointInfoDisplay(JointInfoTable.JointInfoDefinition jointInfo)
@@ -97,21 +100,61 @@ public class DynamincParticleInspector : Editor
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
     }
 
-    private void BlendShapeEditor(BodyShapeOffSetTable offsetsTable)
+    private void BlendShapeEditor(ClothSimEntity clothSimEntity, DynamicParticleComponent dynamicParticle, BodyShapeOffSetTable offsetsTable)
     {
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         //List<string> options = offsetsTable.Definitions.Keys.ToList();
         //int index = options.IndexOf(options[m_currentOffsetsIndex]);
         // 
 
-        string[] opts = offsetsTable.Definitions.Keys.ToArray();
+        ShapeRenderer shapeRenderer = clothSimEntity.ShapeRenderer.GetComponent<ShapeRenderer>();
+        BlendShapeLoader blendShapeLoader = clothSimEntity.BlendShapeLoader.GetComponent<BlendShapeLoader>();
 
+        string[] opts = offsetsTable.Definitions.Keys.ToArray();
+        EditorGUILayout.BeginHorizontal();
         m_currentOffsetsIndex = EditorGUILayout.Popup(m_currentOffsetsIndex, opts);
 
+        //this is Blah
+        if(GUILayout.Button("Edit"))
+        {
+            if (!m_isEditMode)
+            {
+                if (offsetsTable.Definitions.TryGetValue(opts[m_currentOffsetsIndex], out Vector3 outVector))
+                {
+                    float radius = dynamicParticle.ParticleInfo.ConfigValues.m_colliderRadius;
+                    float radiusScale = dynamicParticle.ParticleInfo.VertInfo.ColliderRadiusScale;
+                    shapeRenderer.Initialise(Shape.ShapeType.Sphere, dynamicParticle.transform.rotation, dynamicParticle.transform.position, radius * radiusScale);
+                    blendShapeLoader.SetBlendShapeActive("m_" + opts[m_currentOffsetsIndex]);
 
+                    m_isEditMode = true;
+                }
+            }
+            else
+            {
+                dynamicParticle.transform.position = shapeRenderer.transform.position;
+                shapeRenderer.Clear();
+                m_isEditMode = false;
+                blendShapeLoader.ClearBlendShapes();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
 
-        
+        if(m_isEditMode)
+        {
+            EditorGUILayout.BeginHorizontal();
+            dynamicParticle.transform.position = EditorGUILayout.Vector3Field("Position", dynamicParticle.transform.position);
 
+            if(GUILayout.Button("Save"))
+            {
+                offsetsTable.Definitions[opts[m_currentOffsetsIndex]] = dynamicParticle.transform.position;
+                dynamicParticle.transform.position = shapeRenderer.transform.position;
+
+                shapeRenderer.Clear();
+                blendShapeLoader.ClearBlendShapes();
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
     }

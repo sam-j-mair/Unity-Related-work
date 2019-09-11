@@ -53,12 +53,15 @@ public class ClothSimEntity : MonoBehaviour
     public string m_scriptPath = "";
     public string m_outputPath = "";
     public string ModelPath { get; set; } = "";
-    private GameObject m_model = null;
+    public GameObject ShapeRenderer { get; set; } = null;
+    public GameObject BlendShapeLoader { get; set; } = null;
 
+    private GameObject m_model = null;
     private Dictionary<int, GameObject> m_particleEntities = new Dictionary<int, GameObject>();
     private Dictionary<string, GameObject> m_collisionEntities = new Dictionary<string, GameObject>();
     private ClothSimConfig m_config = new ClothSimConfig();
-    private GameObject m_blendShapeLoader = null;
+    
+    
     private Script m_luaScript = new Script();
 
     public ClothSimConfig ClothConfig { get; set; }
@@ -66,8 +69,14 @@ public class ClothSimEntity : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        m_blendShapeLoader = new GameObject();
-        m_blendShapeLoader.AddComponent<BlendShapeLoader>();
+        BlendShapeLoader = new GameObject();
+        BlendShapeLoader.AddComponent<BlendShapeLoader>();
+        BlendShapeLoader.hideFlags = HideFlags.HideInHierarchy;
+
+        ShapeRenderer = new GameObject();
+        ShapeRenderer.AddComponent<ShapeRenderer>();
+        //ShapeRenderer.hideFlags = HideFlags.HideInHierarchy;
+
 
         name = "ClothRoot";
         transform.position = Vector3.zero;
