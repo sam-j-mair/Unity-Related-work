@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using static VertInfoTable;
@@ -7,6 +8,8 @@ using static VertInfoTable;
 [CustomEditor(typeof(DynamicParticleComponent))]
 public class DynamincParticleInspector : Editor
 {
+    int m_currentOffsetsIndex = 0;
+
     public override void OnInspectorGUI()
     {
         DynamicParticleComponent dynamicParticle = (DynamicParticleComponent)target;
@@ -14,6 +17,7 @@ public class DynamincParticleInspector : Editor
 
         VertInfo vertInfo = dynamicParticle.ParticleInfo.VertInfo;
         JointInfoTable.JointInfoDefinition jointInfo = dynamicParticle.ParticleInfo.JointInfo;
+        BodyShapeOffSetTable bodyShapesOffsetsTable = dynamicParticle.ParticleInfo.VertInfo.BodyShapeOffsetTable;
 
         vertInfo.VertID = EditorGUILayout.IntField("Vert ID", vertInfo.VertID);
         vertInfo.MassScale = EditorGUILayout.FloatField("Mass Scale", vertInfo.MassScale);
@@ -23,10 +27,10 @@ public class DynamincParticleInspector : Editor
 
         JointInfoDisplay(jointInfo);
 
-        if (GUILayout.Button("Body Shape Editor"))
-        {
-
-        }
+//         if (GUILayout.Button("Body Shape Editor"))
+//         {
+// 
+//         }
 
         if (GUILayout.Button("Skin Weights Editor"))
         {
@@ -66,7 +70,7 @@ public class DynamincParticleInspector : Editor
         }
     }
 
-    private static void JointInfoDisplay(JointInfoTable.JointInfoDefinition jointInfo)
+    private void JointInfoDisplay(JointInfoTable.JointInfoDefinition jointInfo)
     {
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         if (jointInfo != null)
@@ -92,4 +96,24 @@ public class DynamincParticleInspector : Editor
         }
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
     }
+
+    private void BlendShapeEditor(BodyShapeOffSetTable offsetsTable)
+    {
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        //List<string> options = offsetsTable.Definitions.Keys.ToList();
+        //int index = options.IndexOf(options[m_currentOffsetsIndex]);
+        // 
+
+        string[] opts = offsetsTable.Definitions.Keys.ToArray();
+
+        m_currentOffsetsIndex = EditorGUILayout.Popup(m_currentOffsetsIndex, opts);
+
+
+
+        
+
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+    }
+
 }

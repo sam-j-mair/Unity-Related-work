@@ -58,6 +58,7 @@ public class ClothSimEntity : MonoBehaviour
     private Dictionary<int, GameObject> m_particleEntities = new Dictionary<int, GameObject>();
     private Dictionary<string, GameObject> m_collisionEntities = new Dictionary<string, GameObject>();
     private ClothSimConfig m_config = new ClothSimConfig();
+    private GameObject m_blendShapeLoader = null;
     private Script m_luaScript = new Script();
 
     public ClothSimConfig ClothConfig { get; set; }
@@ -65,6 +66,9 @@ public class ClothSimEntity : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        m_blendShapeLoader = new GameObject();
+        m_blendShapeLoader.AddComponent<BlendShapeLoader>();
+
         name = "ClothRoot";
         transform.position = Vector3.zero;
         UserData.RegisterAssembly();

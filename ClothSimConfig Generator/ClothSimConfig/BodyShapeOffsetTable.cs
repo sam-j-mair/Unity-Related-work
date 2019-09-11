@@ -6,14 +6,14 @@ using UnityEngine;
 
 public class BodyShapeOffSetTable : ILuaSerialiser
 {
-    Dictionary<string, Vector3> m_definitions = new Dictionary<string, Vector3>();
+    public Dictionary<string, Vector3> Definitions { get; set; } = new Dictionary<string, Vector3>();
 
     public bool Serialise(ref StringBuilder stringBuilder)
     {
         bool success = false;
         stringBuilder.Append("            body_shape_offset = {\n");
 
-        foreach (KeyValuePair<string, Vector3> pair in m_definitions)
+        foreach (KeyValuePair<string, Vector3> pair in Definitions)
         {
             Vector3 v3 = pair.Value;
             stringBuilder.Append("                { body_shape = '" + pair.Key + "', position = vec3(" + v3.x + "," + v3.y + "," + v3.z + ") },\n");
@@ -36,7 +36,7 @@ public class BodyShapeOffSetTable : ILuaSerialiser
             string bodyShape = tableEntry.Get("body_shape").String;
             Vector3 position = tableEntry.Get("position").ToObject<Vector3>();
 
-            m_definitions.Add(bodyShape, position);
+            Definitions.Add(bodyShape, position);
         }
 
         success = true;
