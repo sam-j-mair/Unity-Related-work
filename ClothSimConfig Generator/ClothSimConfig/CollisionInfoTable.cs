@@ -22,7 +22,7 @@ public class CollisionInfoTable : ILuaSerialiser
 
     public class CollisionInfoShapeOffsets : ILuaSerialiser
     {
-        Dictionary<string, CollisionInfoDefinition> m_bodyShapeOffsets = new Dictionary<string, CollisionInfoDefinition>();
+        public Dictionary<string, CollisionInfoDefinition> BodyShapeOffsets { get; set; } = new Dictionary<string, CollisionInfoDefinition>();
 
         public bool Serialise(ref StringBuilder stringBuilder)
         {
@@ -30,7 +30,7 @@ public class CollisionInfoTable : ILuaSerialiser
 
             stringBuilder.Append("            body_shape_offset = {\n");
 
-            foreach(KeyValuePair<string, CollisionInfoDefinition> kvp in m_bodyShapeOffsets)
+            foreach(KeyValuePair<string, CollisionInfoDefinition> kvp in BodyShapeOffsets)
             {
                 stringBuilder.Append("                { ");
 
@@ -73,7 +73,7 @@ public class CollisionInfoTable : ILuaSerialiser
                     RotationOffset = entryValue.Get("rotate").ToObject<Vector3>()
                 };
 
-                m_bodyShapeOffsets.Add(name, def);
+                BodyShapeOffsets.Add(name, def);
             }
 
             success = true;

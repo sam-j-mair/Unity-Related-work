@@ -103,19 +103,17 @@ public class DynamincParticleInspector : Editor
     private void BlendShapeEditor(ClothSimEntity clothSimEntity, DynamicParticleComponent dynamicParticle, BodyShapeOffSetTable offsetsTable)
     {
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-        //List<string> options = offsetsTable.Definitions.Keys.ToList();
-        //int index = options.IndexOf(options[m_currentOffsetsIndex]);
-        // 
-
         ShapeRenderer shapeRenderer = clothSimEntity.ShapeRenderer.GetComponent<ShapeRenderer>();
         BlendShapeLoader blendShapeLoader = clothSimEntity.BlendShapeLoader.GetComponent<BlendShapeLoader>();
 
         string[] opts = offsetsTable.Definitions.Keys.ToArray();
         EditorGUILayout.BeginHorizontal();
         m_currentOffsetsIndex = EditorGUILayout.Popup(m_currentOffsetsIndex, opts);
+        Material modelMaterial = clothSimEntity.Model.GetComponent<MeshRenderer>().material;
+        Color defaultColour = modelMaterial.color;
 
         //this is Blah
-        if(GUILayout.Button("Edit"))
+        if (GUILayout.Button("Edit"))
         {
             if (!m_isEditMode)
             {
@@ -126,6 +124,10 @@ public class DynamincParticleInspector : Editor
                     shapeRenderer.Initialise(Shape.ShapeType.Sphere, dynamicParticle.transform.rotation, dynamicParticle.transform.position, radius * radiusScale);
                     blendShapeLoader.SetBlendShapeActive("m_" + opts[m_currentOffsetsIndex]);
 
+                    dynamicParticle.transform.position = outVector;
+
+                    modelMaterial.color = new Color(defaultColour.r, defaultColour.g, defaultColour.b, 0.5f);
+
                     m_isEditMode = true;
                 }
             }
@@ -135,6 +137,7 @@ public class DynamincParticleInspector : Editor
                 shapeRenderer.Clear();
                 m_isEditMode = false;
                 blendShapeLoader.ClearBlendShapes();
+                modelMaterial.color = defaultColour;
             }
         }
         EditorGUILayout.EndHorizontal();
@@ -151,6 +154,7 @@ public class DynamincParticleInspector : Editor
 
                 shapeRenderer.Clear();
                 blendShapeLoader.ClearBlendShapes();
+                modelMaterial.color = defaultColour;
             }
 
             EditorGUILayout.EndHorizontal();
@@ -158,5 +162,4 @@ public class DynamincParticleInspector : Editor
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
     }
-
 }

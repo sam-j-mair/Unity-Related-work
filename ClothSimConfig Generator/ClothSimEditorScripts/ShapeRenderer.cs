@@ -22,13 +22,12 @@ public class Shape
 
 public class ShapeRenderer : MonoBehaviour
 {
-    public Shape ShapeDefinition { get; set; } = null;
+    public Shape ShapeDefinition { get; set; } = new Shape();
 
     // Start is called before the first frame update
     void Start()
     {
         gameObject.SetActive(false);
-        ShapeDefinition = new Shape();
     }
 
     // Update is called once per frame
@@ -36,14 +35,13 @@ public class ShapeRenderer : MonoBehaviour
     {
         
     }
-
     public void Initialise(Shape.ShapeType shapeType, Quaternion rotation, Vector3 position, float radius, float length = 0.0f)
     {
         gameObject.SetActive(true);
         transform.rotation = rotation;
         transform.position = position;
 
-        ShapeDefinition.ShapeEnum = Shape.ShapeType.Sphere;
+        ShapeDefinition.ShapeEnum = shapeType;
         ShapeDefinition.Radius = radius;
         ShapeDefinition.Length = length;
     }

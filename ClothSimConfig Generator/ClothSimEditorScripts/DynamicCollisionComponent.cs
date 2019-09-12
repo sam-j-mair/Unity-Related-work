@@ -7,6 +7,9 @@ public class DynamicCollisionComponent : MonoBehaviour
 {
     public ClothSimEntity ClothSimEntity { get; set; }
     public CollisionInfo CollisionInfo { get; set; }
+    public Transform ParentTransform { get; set; }
+    public Transform Root { get; set; }
+    public Vector3 ParentScale { get; set; }
 
     private Action m_drawFunc = null;
     // Start is called before the first frame update
@@ -21,9 +24,23 @@ public class DynamicCollisionComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //CollisionInfo.CollisionInfoDefinition.PositionOffset = pra transform.position 
-        //CollisionInfo.CollisionInfoDefinition.PositionOffset = transform.localPosition;  //= (transform.position - transform.parent.position);
-        //CollisionInfo.CollisionInfoDefinition.RotationOffset = transform.localEulerAngles; // = (transform.rotation.eulerAngles - transform.parent.rotation.eulerAngles);
+//         ApplyLocalTransformBegin();
+//         //CollisionInfo.CollisionInfoDefinition.PositionOffset = pra transform.position 
+//         CollisionInfo.CollisionInfoDefinition.PositionOffset = transform.localPosition;  //= (transform.position - transform.parent.position);
+//         CollisionInfo.CollisionInfoDefinition.RotationOffset = transform.localEulerAngles; // = (transform.rotation.eulerAngles - transform.parent.rotation.eulerAngles);
+//         ApplyLocalTransformEnd();
+    }
+
+    public void ApplyLocalTransformBegin()
+    {
+        transform.SetParent(ParentTransform);
+        transform.position = ParentTransform.position;
+        transform.localScale = ParentScale;
+    }
+
+    public void ApplyLocalTransformEnd()
+    {
+        transform.SetParent(Root);
     }
 
     private void OnDrawGizmos()

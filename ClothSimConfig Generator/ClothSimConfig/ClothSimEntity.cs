@@ -56,7 +56,7 @@ public class ClothSimEntity : MonoBehaviour
     public GameObject ShapeRenderer { get; set; } = null;
     public GameObject BlendShapeLoader { get; set; } = null;
 
-    private GameObject m_model = null;
+    public GameObject Model{ get; private set; } = null;
     private Dictionary<int, GameObject> m_particleEntities = new Dictionary<int, GameObject>();
     private Dictionary<string, GameObject> m_collisionEntities = new Dictionary<string, GameObject>();
     private ClothSimConfig m_config = new ClothSimConfig();
@@ -116,19 +116,21 @@ public class ClothSimEntity : MonoBehaviour
 
     public void LoadModel()
     {
-        if(m_model != null)
+        if(Model != null)
         {
-            DestroyImmediate(m_model);
-            m_model = null;
+            DestroyImmediate(Model);
+            Model = null;
         }
 
         GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(ModelPath);
-        m_model = Instantiate(asset);
+        Model = Instantiate(asset);
 
-        if (m_model != null)
+        if (Model != null)
         {
-            m_model.transform.position = Vector3.zero;
-            m_model.transform.SetParent(transform);
+            MeshRenderer renderer = Model.AddComponent<MeshRenderer>();
+
+            Model.transform.position = Vector3.zero;
+            Model.transform.SetParent(transform);
         }
     }
 
@@ -203,10 +205,12 @@ public class ClothSimEntity : MonoBehaviour
             m_collisionEntities.Add(info.CollisionInfoDefinition.Name, gameObject);
             gameObject.transform.SetParent(transform);
 
-
             Transform boneTransform = transform.FindRecursive(info.CollisionInfoDefinition.BoneName.ToLower());
-            //Debug.Assert(boneTransform != null, "This bone " + info.CollisionInfoDefinition.BoneName + " doesn't exist!!");
-            
+
+
+            collision.ParentTransform = boneTransform;
+            collision.Root = rootCollision.transform;
+
             if (boneTransform != null)
             {
                 gameObject.transform.SetParent(boneTransform);
@@ -214,6 +218,8 @@ public class ClothSimEntity : MonoBehaviour
 
                 gameObject.transform.localPosition = info.CollisionInfoDefinition.PositionOffset;
                 gameObject.transform.localEulerAngles = info.CollisionInfoDefinition.RotationOffset;
+
+                collision.ParentScale = boneTransform.localScale;
             }
 
             gameObject.transform.SetParent(rootCollision.transform);
