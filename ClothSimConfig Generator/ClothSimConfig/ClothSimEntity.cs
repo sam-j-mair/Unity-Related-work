@@ -131,6 +131,10 @@ public class ClothSimEntity : MonoBehaviour
 
             Model.transform.position = Vector3.zero;
             Model.transform.SetParent(transform);
+            //added for visualisation.
+            ViewSkeleton skelVisual = Model.AddComponent<ViewSkeleton>();
+
+            skelVisual.rootNode = Model.transform;
         }
     }
 
@@ -207,19 +211,19 @@ public class ClothSimEntity : MonoBehaviour
 
             Transform boneTransform = transform.FindRecursive(info.CollisionInfoDefinition.BoneName.ToLower());
 
-
-            collision.ParentTransform = boneTransform;
-            collision.Root = rootCollision.transform;
-
             if (boneTransform != null)
             {
-                gameObject.transform.SetParent(boneTransform);
-                gameObject.transform.position = boneTransform.position;
+                GameObject dummyObject = new GameObject();
+                dummyObject.transform.position = boneTransform.position;
+                dummyObject.transform.SetParent(boneTransform);
 
-                gameObject.transform.localPosition = info.CollisionInfoDefinition.PositionOffset;
-                gameObject.transform.localEulerAngles = info.CollisionInfoDefinition.RotationOffset;
+                dummyObject.transform.localPosition = info.CollisionInfoDefinition.PositionOffset;
+                dummyObject.transform.localEulerAngles = info.CollisionInfoDefinition.RotationOffset;
 
-                collision.ParentScale = boneTransform.localScale;
+                gameObject.transform.rotation = dummyObject.transform.rotation;
+                gameObject.transform.position = dummyObject.transform.position;
+
+                collision.DummyObject = dummyObject;
             }
 
             gameObject.transform.SetParent(rootCollision.transform);

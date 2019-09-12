@@ -59,16 +59,14 @@ public class DynamicCollisionInspector : Editor
                     float radius = dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius;
                     float length = isCapsule ? dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length : 0.0f;
 
-                    shapeRenderer.Initialise(isCapsule ? Shape.ShapeType.Capsule : Shape.ShapeType.Sphere, dynamicCollision.transform.rotation, dynamicCollision.transform.localPosition, radius, length);
+                    shapeRenderer.Initialise(isCapsule ? Shape.ShapeType.Capsule : Shape.ShapeType.Sphere, dynamicCollision.transform.rotation, dynamicCollision.transform.position, radius, length);
                     blendShapeLoader.SetBlendShapeActive("m_" + opts[m_currentOffsetsIndex]);
 
-                    dynamicCollision.ApplyLocalTransformBegin();
-                    {
-                        dynamicCollision.transform.localPosition = outDef.PositionOffset;
-                        dynamicCollision.transform.localEulerAngles = outDef.RotationOffset;
+                    dynamicCollision.DummyObject.transform.localPosition = outDef.PositionOffset;
+                    dynamicCollision.DummyObject.transform.localEulerAngles = outDef.RotationOffset;
 
-                    }
-                    dynamicCollision.ApplyLocalTransformEnd();
+                    dynamicCollision.transform.position = dynamicCollision.DummyObject.transform.position;
+                    dynamicCollision.transform.rotation = dynamicCollision.DummyObject.transform.rotation;
 
                     dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = outDef.Radius;
 
@@ -82,6 +80,7 @@ public class DynamicCollisionInspector : Editor
             else
             {
                 dynamicCollision.transform.position = shapeRenderer.transform.position;
+                dynamicCollision.transform.rotation = shapeRenderer.transform.rotation;
                 shapeRenderer.Clear();
                 m_isEditMode = false;
                 blendShapeLoader.ClearBlendShapes();
@@ -92,24 +91,23 @@ public class DynamicCollisionInspector : Editor
 
         if (m_isEditMode)
         {
-            EditorGUILayout.BeginHorizontal();
-            dynamicCollision.ApplyLocalTransformBegin();
-            dynamicCollision.transform.localPosition = EditorGUILayout.Vector3Field("Position", dynamicCollision.transform.localPosition);
-            dynamicCollision.transform.localEulerAngles = EditorGUILayout.Vector3Field("Rotation", dynamicCollision.transform.localEulerAngles);
+            //EditorGUILayout.BeginHorizontal();
+            dynamicCollision.DummyObject.transform.localPosition = EditorGUILayout.Vector3Field("Position", dynamicCollision.DummyObject.transform.localPosition);
+            dynamicCollision.DummyObject.transform.localEulerAngles = EditorGUILayout.Vector3Field("Rotation", dynamicCollision.DummyObject.transform.localEulerAngles);
 
             if (isCapsule)
                 dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = EditorGUILayout.FloatField("Length", dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length);
 
             dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = EditorGUILayout.FloatField("Radius", dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius);
 
-            EditorGUILayout.EndHorizontal();
+            //EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Save"))
             {
                 CollisionInfoDefinition collisionInfoDefinition = offsetsTable.BodyShapeOffsets[opts[m_currentOffsetsIndex]];
 
-                collisionInfoDefinition.PositionOffset = dynamicCollision.transform.localPosition;
-                collisionInfoDefinition.RotationOffset = dynamicCollision.transform.localEulerAngles;
+                collisionInfoDefinition.PositionOffset = dynamicCollision.DummyObject.transform.localPosition;
+                collisionInfoDefinition.RotationOffset = dynamicCollision.DummyObject.transform.localEulerAngles;
 
                 collisionInfoDefinition.Radius = dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius;
 
@@ -121,15 +119,13 @@ public class DynamicCollisionInspector : Editor
                 dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = shapeRenderer.ShapeDefinition.Radius;
                 dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = shapeRenderer.ShapeDefinition.Length;
 
-                dynamicCollision.transform.localPosition = shapeRenderer.transform.position;
+                dynamicCollision.transform.position = shapeRenderer.transform.position;
                 dynamicCollision.transform.rotation = shapeRenderer.transform.rotation;
-                dynamicCollision.CollisionInfo.CollisionInfoDefinition.RotationOffset = shapeRenderer.transform.localEulerAngles;
 
                 shapeRenderer.Clear();
                 blendShapeLoader.ClearBlendShapes();
                 modelMaterial.color = defaultColour;
             }
-            dynamicCollision.ApplyLocalTransformEnd();
 
             EditorGUILayout.EndHorizontal();
         }

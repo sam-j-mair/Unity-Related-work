@@ -8,7 +8,7 @@ using System.Collections.Generic;
     public Transform rootNode;
     public Transform[] childNodes;
 
-    void OnDrawGizmosSelected()
+    void OnDrawGizmos()
     {
         if (rootNode != null)
         {
@@ -28,7 +28,7 @@ using System.Collections.Generic;
                 }
                 else
                 {
-                    Gizmos.color = Color.blue;
+                    Gizmos.color = Color.yellow;
                     Gizmos.DrawLine(child.position, child.parent.position);
                     Gizmos.DrawCube(child.position, new Vector3(.01f, .01f, .01f));
                 }
