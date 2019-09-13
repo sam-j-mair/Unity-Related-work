@@ -33,6 +33,10 @@ public class DynamicCollisionInspector : Editor
         collisionInfo.PositionOffset = EditorGUILayout.Vector3Field("Offset", collisionInfo.PositionOffset);
         collisionInfo.RotationOffset = EditorGUILayout.Vector3Field("Rotation", collisionInfo.RotationOffset);
 
+        //dynamicCollision.DummyObject.transform.localPosition = EditorGUILayout.Vector3Field("Offset", collisionInfo.PositionOffset);
+        //dynamicCollision.DummyObject.transform.localEulerAngles = EditorGUILayout.Vector3Field("Rotation", collisionInfo.RotationOffset);
+
+
         BlendShapeEditor(clothSimEntity, dynamicCollision, dynamicCollision.CollisionInfo.CollisionInfoDefinition.BodyShapeOffSets);
     }
 
@@ -91,7 +95,6 @@ public class DynamicCollisionInspector : Editor
 
         if (m_isEditMode)
         {
-            //EditorGUILayout.BeginHorizontal();
             dynamicCollision.DummyObject.transform.localPosition = EditorGUILayout.Vector3Field("Position", dynamicCollision.DummyObject.transform.localPosition);
             dynamicCollision.DummyObject.transform.localEulerAngles = EditorGUILayout.Vector3Field("Rotation", dynamicCollision.DummyObject.transform.localEulerAngles);
 
@@ -100,7 +103,6 @@ public class DynamicCollisionInspector : Editor
 
             dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = EditorGUILayout.FloatField("Radius", dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius);
 
-            //EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Save"))
             {

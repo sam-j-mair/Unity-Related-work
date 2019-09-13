@@ -23,6 +23,20 @@ public class DynamicCollisionComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //This allows us to handle changes coming from the editor inspector.
+        if (DummyObject.transform.localPosition != CollisionInfo.CollisionInfoDefinition.PositionOffset)
+        {
+            DummyObject.transform.localPosition = CollisionInfo.CollisionInfoDefinition.PositionOffset;
+            transform.position = DummyObject.transform.position;
+        }
+
+        if (DummyObject.transform.localEulerAngles != CollisionInfo.CollisionInfoDefinition.RotationOffset)
+        {
+            DummyObject.transform.localEulerAngles = CollisionInfo.CollisionInfoDefinition.RotationOffset;
+            transform.rotation = DummyObject.transform.rotation;
+        }
+
+
         DummyObject.transform.position = transform.position;
         DummyObject.transform.rotation = transform.rotation;
 
