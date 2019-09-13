@@ -109,8 +109,7 @@ public class DynamincParticleInspector : Editor
         string[] opts = offsetsTable.Definitions.Keys.ToArray();
         EditorGUILayout.BeginHorizontal();
         m_currentOffsetsIndex = EditorGUILayout.Popup(m_currentOffsetsIndex, opts);
-        Material modelMaterial = clothSimEntity.Model.GetComponent<MeshRenderer>().material;
-        Color defaultColour = modelMaterial.color;
+        Material modelMaterial = clothSimEntity.Model.GetComponentInChildren<SkinnedMeshRenderer>().material;
 
         //this is Blah
         if (GUILayout.Button("Edit"))
@@ -122,11 +121,12 @@ public class DynamincParticleInspector : Editor
                     float radius = dynamicParticle.ParticleInfo.ConfigValues.m_colliderRadius;
                     float radiusScale = dynamicParticle.ParticleInfo.VertInfo.ColliderRadiusScale;
                     shapeRenderer.Initialise(Shape.ShapeType.Sphere, dynamicParticle.transform.rotation, dynamicParticle.transform.position, radius * radiusScale);
-                    blendShapeLoader.SetBlendShapeActive("m_" + opts[m_currentOffsetsIndex]);
+                    string gender = clothSimEntity.Gender == ClothSimEntity.GenderEnum.Female ? "f_" : "m_";
+                    blendShapeLoader.SetBlendShapeActive(gender + opts[m_currentOffsetsIndex]);
 
                     dynamicParticle.transform.position = outVector;
 
-                    modelMaterial.color = new Color(defaultColour.r, defaultColour.g, defaultColour.b, 0.5f);
+                    modelMaterial.color = ClothSimEntity.Translucient;
 
                     m_isEditMode = true;
                 }
@@ -137,7 +137,7 @@ public class DynamincParticleInspector : Editor
                 shapeRenderer.Clear();
                 m_isEditMode = false;
                 blendShapeLoader.ClearBlendShapes();
-                modelMaterial.color = defaultColour;
+                modelMaterial.color = ClothSimEntity.Opaque;
             }
         }
         EditorGUILayout.EndHorizontal();
@@ -154,7 +154,7 @@ public class DynamincParticleInspector : Editor
 
                 shapeRenderer.Clear();
                 blendShapeLoader.ClearBlendShapes();
-                modelMaterial.color = defaultColour;
+                modelMaterial.color = ClothSimEntity.Opaque;
             }
 
             EditorGUILayout.EndHorizontal();

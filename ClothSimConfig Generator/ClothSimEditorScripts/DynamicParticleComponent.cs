@@ -30,6 +30,12 @@ public class DynamicParticleComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //this allows for changes done via the editor inspector.
+        if (ParticleInfo.VertInfo.Position != transform.position)
+        {
+            transform.position = ParticleInfo.VertInfo.Position;
+        }
+
         ParticleInfo.VertInfo.Position = transform.position;
     }
 

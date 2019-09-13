@@ -49,10 +49,16 @@ public static class ExtensionMethods
 
 public class ClothSimEntity : MonoBehaviour
 {
+    public enum GenderEnum
+    {
+        Male, Female, None
+    }
+
     public Dictionary<string, Color> ConstraintColours { get; set; } = new Dictionary<string, Color>();
     public string m_scriptPath = "";
     public string m_outputPath = "";
     public string ModelPath { get; set; } = "";
+    public GenderEnum Gender { get; set; } = GenderEnum.None;
     public GameObject ShapeRenderer { get; set; } = null;
     public GameObject BlendShapeLoader { get; set; } = null;
 
@@ -60,9 +66,11 @@ public class ClothSimEntity : MonoBehaviour
     private Dictionary<int, GameObject> m_particleEntities = new Dictionary<int, GameObject>();
     private Dictionary<string, GameObject> m_collisionEntities = new Dictionary<string, GameObject>();
     private ClothSimConfig m_config = new ClothSimConfig();
-    
-    
+    private Material m_defaultMaterial = null;
     private Script m_luaScript = new Script();
+
+    public static Color Translucient = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+    public static Color Opaque = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 
     public ClothSimConfig ClothConfig { get; set; }
 
@@ -75,8 +83,8 @@ public class ClothSimEntity : MonoBehaviour
 
         ShapeRenderer = new GameObject();
         ShapeRenderer.AddComponent<ShapeRenderer>();
-        //ShapeRenderer.hideFlags = HideFlags.HideInHierarchy;
 
+        m_defaultMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/defaultMaterial.mat");
 
         name = "ClothRoot";
         transform.position = Vector3.zero;
@@ -124,10 +132,12 @@ public class ClothSimEntity : MonoBehaviour
 
         GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(ModelPath);
         Model = Instantiate(asset);
+        Gender = ModelPath.Contains("female") ? GenderEnum.Female : GenderEnum.Male;
 
         if (Model != null)
         {
-            MeshRenderer renderer = Model.AddComponent<MeshRenderer>();
+            SkinnedMeshRenderer renderer = Model.GetComponentInChildren<SkinnedMeshRenderer>();
+            renderer.material = m_defaultMaterial;
 
             Model.transform.position = Vector3.zero;
             Model.transform.SetParent(transform);

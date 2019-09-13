@@ -28,7 +28,7 @@ using System.Collections.Generic;
                 }
                 else
                 {
-                    Gizmos.color = Color.yellow;
+                    Gizmos.color = Color.black;
                     Gizmos.DrawLine(child.position, child.parent.position);
                     Gizmos.DrawCube(child.position, new Vector3(.01f, .01f, .01f));
                 }

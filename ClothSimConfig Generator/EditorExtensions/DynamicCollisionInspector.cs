@@ -33,10 +33,6 @@ public class DynamicCollisionInspector : Editor
         collisionInfo.PositionOffset = EditorGUILayout.Vector3Field("Offset", collisionInfo.PositionOffset);
         collisionInfo.RotationOffset = EditorGUILayout.Vector3Field("Rotation", collisionInfo.RotationOffset);
 
-        //dynamicCollision.DummyObject.transform.localPosition = EditorGUILayout.Vector3Field("Offset", collisionInfo.PositionOffset);
-        //dynamicCollision.DummyObject.transform.localEulerAngles = EditorGUILayout.Vector3Field("Rotation", collisionInfo.RotationOffset);
-
-
         BlendShapeEditor(clothSimEntity, dynamicCollision, dynamicCollision.CollisionInfo.CollisionInfoDefinition.BodyShapeOffSets);
     }
 
@@ -49,8 +45,7 @@ public class DynamicCollisionInspector : Editor
         string[] opts = offsetsTable.BodyShapeOffsets.Keys.ToArray();
         EditorGUILayout.BeginHorizontal();
         m_currentOffsetsIndex = EditorGUILayout.Popup(m_currentOffsetsIndex, opts);
-        Material modelMaterial = clothSimEntity.Model.GetComponent<MeshRenderer>().material;
-        Color defaultColour = modelMaterial.color;
+        Material modelMaterial = clothSimEntity.Model.GetComponentInChildren<SkinnedMeshRenderer>().material;
         bool isCapsule = dynamicCollision.CollisionInfo.CollisionInfoDefinition.CollisionType == "capsule";
 
         //this is Blah
@@ -64,7 +59,8 @@ public class DynamicCollisionInspector : Editor
                     float length = isCapsule ? dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length : 0.0f;
 
                     shapeRenderer.Initialise(isCapsule ? Shape.ShapeType.Capsule : Shape.ShapeType.Sphere, dynamicCollision.transform.rotation, dynamicCollision.transform.position, radius, length);
-                    blendShapeLoader.SetBlendShapeActive("m_" + opts[m_currentOffsetsIndex]);
+                    string gender = clothSimEntity.Gender == ClothSimEntity.GenderEnum.Female ? "f_" : "m_";
+                    blendShapeLoader.SetBlendShapeActive(gender + opts[m_currentOffsetsIndex]);
 
                     dynamicCollision.DummyObject.transform.localPosition = outDef.PositionOffset;
                     dynamicCollision.DummyObject.transform.localEulerAngles = outDef.RotationOffset;
@@ -77,7 +73,7 @@ public class DynamicCollisionInspector : Editor
                     if (isCapsule)
                         dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = outDef.Length;
 
-                    modelMaterial.color = new Color(defaultColour.r, defaultColour.g, defaultColour.b, 0.5f);
+                    modelMaterial.color = ClothSimEntity.Translucient;
                     m_isEditMode = true;
                 }
             }
@@ -88,15 +84,15 @@ public class DynamicCollisionInspector : Editor
                 shapeRenderer.Clear();
                 m_isEditMode = false;
                 blendShapeLoader.ClearBlendShapes();
-                modelMaterial.color = defaultColour;
+                modelMaterial.color = ClothSimEntity.Opaque;
             }
         }
         EditorGUILayout.EndHorizontal();
 
         if (m_isEditMode)
         {
-            dynamicCollision.DummyObject.transform.localPosition = EditorGUILayout.Vector3Field("Position", dynamicCollision.DummyObject.transform.localPosition);
-            dynamicCollision.DummyObject.transform.localEulerAngles = EditorGUILayout.Vector3Field("Rotation", dynamicCollision.DummyObject.transform.localEulerAngles);
+            dynamicCollision.DummyObject.transform.localPosition = EditorGUILayout.Vector3Field("Position Offset", dynamicCollision.DummyObject.transform.localPosition);
+            dynamicCollision.DummyObject.transform.localEulerAngles = EditorGUILayout.Vector3Field("Rotation Offset", dynamicCollision.DummyObject.transform.localEulerAngles);
 
             if (isCapsule)
                 dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = EditorGUILayout.FloatField("Length", dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length);
@@ -126,7 +122,7 @@ public class DynamicCollisionInspector : Editor
 
                 shapeRenderer.Clear();
                 blendShapeLoader.ClearBlendShapes();
-                modelMaterial.color = defaultColour;
+                modelMaterial.color = ClothSimEntity.Opaque;
             }
 
             EditorGUILayout.EndHorizontal();

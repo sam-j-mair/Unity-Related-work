@@ -24,7 +24,11 @@ public class ClothSimInspector : Editor
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         EditorGUILayout.TextField("Model Path", clothSimEntity.ModelPath);
+
+        ClothSimEntity.Translucient = EditorGUILayout.Vector4Field("Translucient Colour", ClothSimEntity.Translucient);
+        ClothSimEntity.Opaque = EditorGUILayout.Vector4Field("Opaque Colour", ClothSimEntity.Opaque);
         EditorGUILayout.BeginHorizontal();
+
         if (GUILayout.Button("Browse"))
         {
             Uri absolutePath = new Uri(EditorUtility.OpenFilePanel("Open", "/Resourses/Models", "FBX"));
@@ -40,8 +44,6 @@ public class ClothSimInspector : Editor
 
         if (config != null)
         {
-            //clothSimEntity.m_outputPath = EditorGUILayout.TextField("Output Path", clothSimEntity.m_outputPath);
-            //clothSimEntity.m_scriptPath = EditorGUILayout.TextField("Load Script Path", clothSimEntity.m_scriptPath);
             config.m_configValues.m_mass = EditorGUILayout.FloatField("Global Mass", config.m_configValues.m_mass);
             config.m_configValues.m_pullToSkin = EditorGUILayout.FloatField("Pull To Skin", config.m_configValues.m_pullToSkin);
             config.m_configValues.m_pullToSkinLimit = EditorGUILayout.FloatField("Pull To Skin Limit", config.m_configValues.m_pullToSkinLimit);
