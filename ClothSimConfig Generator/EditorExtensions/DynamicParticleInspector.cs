@@ -112,54 +112,70 @@ public class DynamincParticleInspector : Editor
         Material modelMaterial = clothSimEntity.Model.GetComponentInChildren<SkinnedMeshRenderer>().material;
 
         //this is Blah
-        if (GUILayout.Button("Edit"))
+        if (opts.Count() > 0)
         {
-            if (!m_isEditMode)
+            if (GUILayout.Button("Edit"))
             {
-                if (offsetsTable.Definitions.TryGetValue(opts[m_currentOffsetsIndex], out Vector3 outVector))
+                if (!m_isEditMode)
                 {
-                    float radius = dynamicParticle.ParticleInfo.ConfigValues.m_colliderRadius;
-                    float radiusScale = dynamicParticle.ParticleInfo.VertInfo.ColliderRadiusScale;
-                    shapeRenderer.Initialise(Shape.ShapeType.Sphere, dynamicParticle.transform.rotation, dynamicParticle.transform.position, radius * radiusScale);
-                    string gender = clothSimEntity.Gender == ClothSimEntity.GenderEnum.Female ? "f_" : "m_";
-                    blendShapeLoader.SetBlendShapeActive(gender + opts[m_currentOffsetsIndex]);
+                    if (offsetsTable.Definitions.TryGetValue(opts[m_currentOffsetsIndex], out Vector3 outVector))
+                    {
+                        float radius = dynamicParticle.ParticleInfo.ConfigValues.m_colliderRadius;
+                        float radiusScale = dynamicParticle.ParticleInfo.VertInfo.ColliderRadiusScale;
+                        shapeRenderer.Initialise(Shape.ShapeType.Sphere, dynamicParticle.transform.rotation, dynamicParticle.transform.position, radius * radiusScale);
+                        string gender = clothSimEntity.Gender == ClothSimEntity.GenderEnum.Female ? "f_" : "m_";
+                        blendShapeLoader.SetBlendShapeActive(gender + opts[m_currentOffsetsIndex]);
 
-                    dynamicParticle.transform.position = outVector;
+                        dynamicParticle.transform.position = outVector;
 
-                    modelMaterial.color = ClothSimEntity.Translucient;
+                        modelMaterial.color = ClothSimEntity.Translucient;
 
-                    m_isEditMode = true;
+                        m_isEditMode = true;
+                    }
+                }
+                else
+                {
+                    dynamicParticle.transform.position = shapeRenderer.transform.position;
+                    shapeRenderer.Clear();
+                    m_isEditMode = false;
+                    blendShapeLoader.ClearBlendShapes();
+                    modelMaterial.color = ClothSimEntity.Opaque;
                 }
             }
-            else
+            EditorGUILayout.EndHorizontal();
+
+            if (m_isEditMode)
             {
-                dynamicParticle.transform.position = shapeRenderer.transform.position;
-                shapeRenderer.Clear();
-                m_isEditMode = false;
-                blendShapeLoader.ClearBlendShapes();
-                modelMaterial.color = ClothSimEntity.Opaque;
+                EditorGUILayout.BeginHorizontal();
+                dynamicParticle.transform.position = EditorGUILayout.Vector3Field("Position", dynamicParticle.transform.position);
+
+                if (GUILayout.Button("Save"))
+                {
+                    offsetsTable.Definitions[opts[m_currentOffsetsIndex]] = dynamicParticle.transform.position;
+                    dynamicParticle.transform.position = shapeRenderer.transform.position;
+
+                    shapeRenderer.Clear();
+                    blendShapeLoader.ClearBlendShapes();
+                    modelMaterial.color = ClothSimEntity.Opaque;
+                    m_isEditMode = false;
+                }
+
+                EditorGUILayout.EndHorizontal();
             }
+        }
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Add Offset"))
+        {
+
+        }
+
+        if (GUILayout.Button("Remove Offset"))
+        {
+
         }
         EditorGUILayout.EndHorizontal();
-
-        if(m_isEditMode)
-        {
-            EditorGUILayout.BeginHorizontal();
-            dynamicParticle.transform.position = EditorGUILayout.Vector3Field("Position", dynamicParticle.transform.position);
-
-            if(GUILayout.Button("Save"))
-            {
-                offsetsTable.Definitions[opts[m_currentOffsetsIndex]] = dynamicParticle.transform.position;
-                dynamicParticle.transform.position = shapeRenderer.transform.position;
-
-                shapeRenderer.Clear();
-                blendShapeLoader.ClearBlendShapes();
-                modelMaterial.color = ClothSimEntity.Opaque;
-            }
-
-            EditorGUILayout.EndHorizontal();
-        }
-
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        
     }
 }

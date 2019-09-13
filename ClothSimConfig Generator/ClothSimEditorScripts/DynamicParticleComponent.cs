@@ -31,11 +31,10 @@ public class DynamicParticleComponent : MonoBehaviour
     void Update()
     {
         //this allows for changes done via the editor inspector.
-        if (ParticleInfo.VertInfo.Position != transform.position)
-        {
-            transform.position = ParticleInfo.VertInfo.Position;
-        }
-
+//         if (ParticleInfo.VertInfo.Position != transform.position)
+//         {
+//             transform.position = ParticleInfo.VertInfo.Position;
+//        
         ParticleInfo.VertInfo.Position = transform.position;
     }
 

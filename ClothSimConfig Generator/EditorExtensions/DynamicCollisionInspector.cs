@@ -48,89 +48,105 @@ public class DynamicCollisionInspector : Editor
         Material modelMaterial = clothSimEntity.Model.GetComponentInChildren<SkinnedMeshRenderer>().material;
         bool isCapsule = dynamicCollision.CollisionInfo.CollisionInfoDefinition.CollisionType == "capsule";
 
-        //this is Blah
-        if (GUILayout.Button("Edit"))
+        if(opts.Count() > 0)
         {
-            if (!m_isEditMode)
+            //this is Blah
+            if (GUILayout.Button("Edit"))
             {
-                if (offsetsTable.BodyShapeOffsets.TryGetValue(opts[m_currentOffsetsIndex], out CollisionInfoDefinition outDef))
+                if (!m_isEditMode)
                 {
-                    float radius = dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius;
-                    float length = isCapsule ? dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length : 0.0f;
+                    if (offsetsTable.BodyShapeOffsets.TryGetValue(opts[m_currentOffsetsIndex], out CollisionInfoDefinition outDef))
+                    {
+                        float radius = dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius;
+                        float length = isCapsule ? dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length : 0.0f;
 
-                    shapeRenderer.Initialise(isCapsule ? Shape.ShapeType.Capsule : Shape.ShapeType.Sphere, dynamicCollision.transform.rotation, dynamicCollision.transform.position, radius, length);
-                    string gender = clothSimEntity.Gender == ClothSimEntity.GenderEnum.Female ? "f_" : "m_";
-                    blendShapeLoader.SetBlendShapeActive(gender + opts[m_currentOffsetsIndex]);
+                        shapeRenderer.Initialise(isCapsule ? Shape.ShapeType.Capsule : Shape.ShapeType.Sphere, dynamicCollision.transform.rotation, dynamicCollision.transform.position, radius, length);
+                        string gender = clothSimEntity.Gender == ClothSimEntity.GenderEnum.Female ? "f_" : "m_";
+                        blendShapeLoader.SetBlendShapeActive(gender + opts[m_currentOffsetsIndex]);
 
-                    dynamicCollision.DummyObject.transform.localPosition = outDef.PositionOffset;
-                    dynamicCollision.DummyObject.transform.localEulerAngles = outDef.RotationOffset;
+                        dynamicCollision.DummyObject.transform.localPosition = outDef.PositionOffset;
+                        dynamicCollision.DummyObject.transform.localEulerAngles = outDef.RotationOffset;
 
-                    dynamicCollision.transform.position = dynamicCollision.DummyObject.transform.position;
-                    dynamicCollision.transform.rotation = dynamicCollision.DummyObject.transform.rotation;
+                        dynamicCollision.transform.position = dynamicCollision.DummyObject.transform.position;
+                        dynamicCollision.transform.rotation = dynamicCollision.DummyObject.transform.rotation;
 
-                    dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = outDef.Radius;
+                        dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = outDef.Radius;
 
-                    if (isCapsule)
-                        dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = outDef.Length;
+                        if (isCapsule)
+                            dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = outDef.Length;
 
-                    modelMaterial.color = ClothSimEntity.Translucient;
-                    m_isEditMode = true;
+                        modelMaterial.color = ClothSimEntity.Translucient;
+                        m_isEditMode = true;
+                    }
+                }
+                else
+                {
+                    dynamicCollision.transform.position = shapeRenderer.transform.position;
+                    dynamicCollision.transform.rotation = shapeRenderer.transform.rotation;
+
+                    dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = shapeRenderer.ShapeDefinition.Length;
+                    dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = shapeRenderer.ShapeDefinition.Radius;
+
+                    shapeRenderer.Clear();
+                    m_isEditMode = false;
+                    blendShapeLoader.ClearBlendShapes();
+                    modelMaterial.color = ClothSimEntity.Opaque;
                 }
             }
-            else
+            EditorGUILayout.EndHorizontal();
+
+            if (m_isEditMode)
             {
-                dynamicCollision.transform.position = shapeRenderer.transform.position;
-                dynamicCollision.transform.rotation = shapeRenderer.transform.rotation;
-
-                dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = shapeRenderer.ShapeDefinition.Length;
-                dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = shapeRenderer.ShapeDefinition.Radius;
-
-                shapeRenderer.Clear();
-                m_isEditMode = false;
-                blendShapeLoader.ClearBlendShapes();
-                modelMaterial.color = ClothSimEntity.Opaque;
-            }
-        }
-        EditorGUILayout.EndHorizontal();
-
-        if (m_isEditMode)
-        {
-            dynamicCollision.DummyObject.transform.localPosition = EditorGUILayout.Vector3Field("Position Offset", dynamicCollision.DummyObject.transform.localPosition);
-            dynamicCollision.DummyObject.transform.localEulerAngles = EditorGUILayout.Vector3Field("Rotation Offset", dynamicCollision.DummyObject.transform.localEulerAngles);
-
-            if (isCapsule)
-                dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = EditorGUILayout.FloatField("Length", dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length);
-
-            dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = EditorGUILayout.FloatField("Radius", dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius);
-
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Save"))
-            {
-                CollisionInfoDefinition collisionInfoDefinition = offsetsTable.BodyShapeOffsets[opts[m_currentOffsetsIndex]];
-
-                collisionInfoDefinition.PositionOffset = dynamicCollision.DummyObject.transform.localPosition;
-                collisionInfoDefinition.RotationOffset = dynamicCollision.DummyObject.transform.localEulerAngles;
-
-                collisionInfoDefinition.Radius = dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius;
+                dynamicCollision.DummyObject.transform.localPosition = EditorGUILayout.Vector3Field("Position Offset", dynamicCollision.DummyObject.transform.localPosition);
+                dynamicCollision.DummyObject.transform.localEulerAngles = EditorGUILayout.Vector3Field("Rotation Offset", dynamicCollision.DummyObject.transform.localEulerAngles);
 
                 if (isCapsule)
-                    collisionInfoDefinition.Length = dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length;
+                    dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = EditorGUILayout.FloatField("Length", dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length);
 
-                //restore the original values.
-                
-                dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = shapeRenderer.ShapeDefinition.Radius;
-                dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = shapeRenderer.ShapeDefinition.Length;
+                dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = EditorGUILayout.FloatField("Radius", dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius);
 
-                dynamicCollision.transform.position = shapeRenderer.transform.position;
-                dynamicCollision.transform.rotation = shapeRenderer.transform.rotation;
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Save"))
+                {
+                    CollisionInfoDefinition collisionInfoDefinition = offsetsTable.BodyShapeOffsets[opts[m_currentOffsetsIndex]];
 
-                shapeRenderer.Clear();
-                blendShapeLoader.ClearBlendShapes();
-                modelMaterial.color = ClothSimEntity.Opaque;
+                    collisionInfoDefinition.PositionOffset = dynamicCollision.DummyObject.transform.localPosition;
+                    collisionInfoDefinition.RotationOffset = dynamicCollision.DummyObject.transform.localEulerAngles;
+
+                    collisionInfoDefinition.Radius = dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius;
+
+                    if (isCapsule)
+                        collisionInfoDefinition.Length = dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length;
+
+                    //restore the original values.
+
+                    dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = shapeRenderer.ShapeDefinition.Radius;
+                    dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = shapeRenderer.ShapeDefinition.Length;
+
+                    dynamicCollision.transform.position = shapeRenderer.transform.position;
+                    dynamicCollision.transform.rotation = shapeRenderer.transform.rotation;
+
+                    shapeRenderer.Clear();
+                    blendShapeLoader.ClearBlendShapes();
+                    modelMaterial.color = ClothSimEntity.Opaque;
+                    m_isEditMode = false;
+                }
+
+                EditorGUILayout.EndHorizontal();
             }
-
-            EditorGUILayout.EndHorizontal();
         }
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Add Offset"))
+        {
+
+        }
+
+        if (GUILayout.Button("Remove Offset"))
+        {
+
+        }
+        EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
     }
