@@ -81,6 +81,10 @@ public class DynamicCollisionInspector : Editor
             {
                 dynamicCollision.transform.position = shapeRenderer.transform.position;
                 dynamicCollision.transform.rotation = shapeRenderer.transform.rotation;
+
+                dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = shapeRenderer.ShapeDefinition.Length;
+                dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = shapeRenderer.ShapeDefinition.Radius;
+
                 shapeRenderer.Clear();
                 m_isEditMode = false;
                 blendShapeLoader.ClearBlendShapes();

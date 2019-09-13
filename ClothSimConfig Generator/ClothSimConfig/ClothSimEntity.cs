@@ -86,7 +86,7 @@ public class ClothSimEntity : MonoBehaviour
 
         m_defaultMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/defaultMaterial.mat");
 
-        name = "ClothRoot";
+        name = "Cloth";
         transform.position = Vector3.zero;
         UserData.RegisterAssembly();
         
@@ -151,6 +151,7 @@ public class ClothSimEntity : MonoBehaviour
     public void GenerateFromConfig()
     {
         LoadModel();
+        name = name + "(" + Path.GetFileName(m_scriptPath) + ")";
 
         List<ParticleInfo> particleInfo = m_config.GenerateFromConfig();
 
