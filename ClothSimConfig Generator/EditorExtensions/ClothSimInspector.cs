@@ -4,17 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+
 using static DynamicPropertiesTable;
 
 [CustomEditor(typeof(ClothSimEntity))]
 public class ClothSimInspector : Editor
 {
-    bool m_foldoutState = false;
+    private bool m_foldoutState = false;
+    private bool m_foldoutStateBlend = false;
     int m_currentPropertiesIndex = 0;
 
     [Header("Constraints Definitions")]
     string m_newProperiesName = "";
     int m_selectedVertOrderIndex = 0;
+    
 
     public override void OnInspectorGUI()
     {
@@ -112,6 +115,8 @@ public class ClothSimInspector : Editor
             clothSimEntity.GenerateFromMesh(assetsPath.MakeRelativeUri(absolutePath).ToString());
         }
         EditorGUILayout.EndHorizontal();
+
+        BlendShapePanel(clothSimEntity);
     }
 
     private void DynamicPropertiesDisplay(ClothSimEntity clothSimEntity)
@@ -182,6 +187,30 @@ public class ClothSimInspector : Editor
 
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndFoldoutHeaderGroup();
+    }
+
+    private void BlendShapePanel(ClothSimEntity clothSimEntity)
+    {
+        m_foldoutStateBlend = EditorGUILayout.BeginFoldoutHeaderGroup(m_foldoutStateBlend, "BlendShapes");
+        BlendShapeLoader loader = clothSimEntity.BlendShapeLoader.GetComponent<BlendShapeLoader>();
+        if (GUILayout.Button("Show"))
+        {
+            loader.SetBlendShapeActive(true);
+            
+        }
         
+        Dictionary<string, float> blendShapeValues = loader.GetBlendShapeValues();
+        Dictionary<string, float> newValues = new Dictionary<string, float>(blendShapeValues);
+
+        foreach (KeyValuePair<string, float> kvp in blendShapeValues)
+        {
+            EditorGUILayout.LabelField(kvp.Key);
+            newValues[kvp.Key] = EditorGUILayout.Slider(kvp.Value, 0.0f, 1.0f);
+        }
+
+        loader.SetBlendShapeValues(newValues);
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        EditorGUILayout.EndFoldoutHeaderGroup();
     }
 }

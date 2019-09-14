@@ -294,6 +294,12 @@ public class ClothSimEntity : MonoBehaviour
         }
     }
 
+    public void ApplyBlendOffsets(Dictionary<string, float> blendShapeWeights)
+    {
+
+
+    }
+
     public void AddConstraint()
     {
 

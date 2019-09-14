@@ -61,7 +61,9 @@ public class DynamicCollisionInspector : Editor
                         float length = isCapsule ? dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length : 0.0f;
 
                         shapeRenderer.Initialise(isCapsule ? Shape.ShapeType.Capsule : Shape.ShapeType.Sphere, dynamicCollision.transform.rotation, dynamicCollision.transform.position, radius, length);
-                        blendShapeLoader.SetBlendShapeActive(opts[m_currentOffsetsIndex], 1.0f);
+                        blendShapeLoader.ClearBlendShapes();
+                        blendShapeLoader.SetBlendShapeActive(true);
+                        blendShapeLoader.SetBlendShapeValue(opts[m_currentOffsetsIndex], 1.0f);
                         dynamicCollision.DummyObject.transform.localPosition = outDef.PositionOffset;
                         dynamicCollision.DummyObject.transform.localEulerAngles = outDef.RotationOffset;
                         dynamicCollision.transform.position = dynamicCollision.DummyObject.transform.position;

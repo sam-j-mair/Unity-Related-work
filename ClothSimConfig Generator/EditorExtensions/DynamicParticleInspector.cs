@@ -120,10 +120,13 @@ public class DynamincParticleInspector : Editor
                 {
                     if (offsetsTable.Definitions.TryGetValue(opts[m_currentOffsetsIndex], out Vector3 outVector))
                     {
+                        
                         float radius = dynamicParticle.ParticleInfo.ConfigValues.m_colliderRadius;
                         float radiusScale = dynamicParticle.ParticleInfo.VertInfo.ColliderRadiusScale;
                         shapeRenderer.Initialise(Shape.ShapeType.Sphere, dynamicParticle.transform.rotation, dynamicParticle.transform.position, radius * radiusScale);
-                        blendShapeLoader.SetBlendShapeActive(opts[m_currentOffsetsIndex], 1.0f);
+                        blendShapeLoader.ClearBlendShapes();
+                        blendShapeLoader.SetBlendShapeActive(true);
+                        blendShapeLoader.SetBlendShapeValue(opts[m_currentOffsetsIndex], 1.0f);
                         dynamicParticle.transform.position = outVector;
                         modelMaterial.color = ClothSimEntity.Translucient;
 

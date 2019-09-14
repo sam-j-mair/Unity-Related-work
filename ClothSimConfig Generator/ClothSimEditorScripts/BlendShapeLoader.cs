@@ -59,16 +59,56 @@ public class BlendShapeLoader : MonoBehaviour
         InitialiseMapping();
     }
 
-    public void SetBlendShapeActive(string blendShapeName, float amount)
+    public void SetBlendShapeActive(bool isActive)
     {
-        if(BlendShapesMapping.TryGetValue(blendShapeName, out int index))
+        CurrentModel.SetActive(isActive);
+    }
+
+    public void SetBlendShapeValue(string name, float value)
+    {
+        Debug.Assert(value >= 0.0f && value <= 1.0f);
+
+        if (BlendShapesMapping.TryGetValue(name, out int index))
         {
             SkinnedMeshRenderer skinnedMeshRenderer = CurrentModel.GetComponentInChildren<SkinnedMeshRenderer>();
 
-            skinnedMeshRenderer.SetBlendShapeWeight(index, amount);
+            skinnedMeshRenderer.SetBlendShapeWeight(index, value);
+        }
+    }
+
+    public float GetBlendShapeValue(string name)
+    {
+        float value = -1.0f;
+        if(BlendShapesMapping.TryGetValue(name, out int index))
+        {
+            SkinnedMeshRenderer skinnedMeshRenderer = CurrentModel.GetComponentInChildren<SkinnedMeshRenderer>();
+
+            value = skinnedMeshRenderer.GetBlendShapeWeight(index);
         }
 
-        CurrentModel.SetActive(true);
+        return value;
+    }
+
+    public void SetBlendShapeValues(Dictionary<string, float> blendShapeValues)
+    {
+        foreach(KeyValuePair<string, float> kvp in blendShapeValues)
+        {
+            SetBlendShapeValue(kvp.Key, kvp.Value);
+        }
+    }
+
+    public Dictionary<string, float> GetBlendShapeValues()
+    {
+        Dictionary<string, float> blendShapeValues = new Dictionary<string, float>();
+
+        foreach(string key in BlendShapesMapping.Keys)
+        {
+            float value = GetBlendShapeValue(key);
+            Debug.Assert(value != -1.0f);
+            blendShapeValues.Add(key, value);
+        }
+
+        return blendShapeValues;
     }
 
     public void ClearBlendShapes()
@@ -82,6 +122,6 @@ public class BlendShapeLoader : MonoBehaviour
             skinnedMeshRenderer.SetBlendShapeWeight(i, 0);
         }
 
-        CurrentModel.SetActive(false);
+        SetBlendShapeActive(false);
     }
 }
