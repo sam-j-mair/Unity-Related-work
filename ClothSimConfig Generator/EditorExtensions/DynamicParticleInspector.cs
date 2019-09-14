@@ -123,11 +123,8 @@ public class DynamincParticleInspector : Editor
                         float radius = dynamicParticle.ParticleInfo.ConfigValues.m_colliderRadius;
                         float radiusScale = dynamicParticle.ParticleInfo.VertInfo.ColliderRadiusScale;
                         shapeRenderer.Initialise(Shape.ShapeType.Sphere, dynamicParticle.transform.rotation, dynamicParticle.transform.position, radius * radiusScale);
-                        string gender = clothSimEntity.Gender == ClothSimEntity.GenderEnum.Female ? "f_" : "m_";
-                        blendShapeLoader.SetBlendShapeActive(gender + opts[m_currentOffsetsIndex]);
-
+                        blendShapeLoader.SetBlendShapeActive(opts[m_currentOffsetsIndex], 1.0f);
                         dynamicParticle.transform.position = outVector;
-
                         modelMaterial.color = ClothSimEntity.Translucient;
 
                         m_isEditMode = true;

@@ -134,6 +134,10 @@ public class ClothSimEntity : MonoBehaviour
         Model = Instantiate(asset);
         Gender = ModelPath.Contains("female") ? GenderEnum.Female : GenderEnum.Male;
 
+        string gender = Gender == GenderEnum.Female ? "f_" : "m_";
+        BlendShapeLoader loader = BlendShapeLoader.GetComponent<BlendShapeLoader>();
+        loader.SetBlendShapesModel(gender + "blendsShapes");
+
         if (Model != null)
         {
             SkinnedMeshRenderer renderer = Model.GetComponentInChildren<SkinnedMeshRenderer>();

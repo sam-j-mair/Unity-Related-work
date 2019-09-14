@@ -61,15 +61,11 @@ public class DynamicCollisionInspector : Editor
                         float length = isCapsule ? dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length : 0.0f;
 
                         shapeRenderer.Initialise(isCapsule ? Shape.ShapeType.Capsule : Shape.ShapeType.Sphere, dynamicCollision.transform.rotation, dynamicCollision.transform.position, radius, length);
-                        string gender = clothSimEntity.Gender == ClothSimEntity.GenderEnum.Female ? "f_" : "m_";
-                        blendShapeLoader.SetBlendShapeActive(gender + opts[m_currentOffsetsIndex]);
-
+                        blendShapeLoader.SetBlendShapeActive(opts[m_currentOffsetsIndex], 1.0f);
                         dynamicCollision.DummyObject.transform.localPosition = outDef.PositionOffset;
                         dynamicCollision.DummyObject.transform.localEulerAngles = outDef.RotationOffset;
-
                         dynamicCollision.transform.position = dynamicCollision.DummyObject.transform.position;
                         dynamicCollision.transform.rotation = dynamicCollision.DummyObject.transform.rotation;
-
                         dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = outDef.Radius;
 
                         if (isCapsule)
@@ -83,7 +79,6 @@ public class DynamicCollisionInspector : Editor
                 {
                     dynamicCollision.transform.position = shapeRenderer.transform.position;
                     dynamicCollision.transform.rotation = shapeRenderer.transform.rotation;
-
                     dynamicCollision.CollisionInfo.CollisionInfoDefinition.Length = shapeRenderer.ShapeDefinition.Length;
                     dynamicCollision.CollisionInfo.CollisionInfoDefinition.Radius = shapeRenderer.ShapeDefinition.Radius;
 
