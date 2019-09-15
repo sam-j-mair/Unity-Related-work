@@ -210,6 +210,21 @@ public class ClothSimInspector : Editor
 
         loader.SetBlendShapeValues(newValues);
 
+        if(GUILayout.Button("Update BlendShapes"))
+        {
+            if(!clothSimEntity.AllowBlendShapeUpdate)
+            {
+                clothSimEntity.SaveBlendShapePositions();
+                clothSimEntity.AllowBlendShapeUpdate = true;
+            }
+            else
+            {
+                clothSimEntity.RestoreBlendShapePositions();
+                clothSimEntity.AllowBlendShapeUpdate = false;
+            }
+        }
+        
+
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         EditorGUILayout.EndFoldoutHeaderGroup();
     }

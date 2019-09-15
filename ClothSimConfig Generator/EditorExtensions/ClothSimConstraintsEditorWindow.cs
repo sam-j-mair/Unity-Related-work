@@ -27,7 +27,6 @@ public class ClothSimConstraintsEditorWindow : EditorWindow
             Dictionary<string, DynamicPropertiesDef> constraintProperties = clothSimEntity.GetConstraintDefinitions();
             Event currentEvent = Event.current;
 
-
             List<ConstraintInfo> constraintInfo = ParticleComponent.ConstraintParticles;
             List<ConstraintDef> defs = ParticleComponent.ParticleInfo.VertInfo.ConstraintsTable.ConstraintsDefs;
             Dictionary<string, DynamicPropertiesDef> dynamicProperties = clothSimEntity.GetConstraintDefinitions();
@@ -35,7 +34,6 @@ public class ClothSimConstraintsEditorWindow : EditorWindow
             string[] options = keys.ToArray();
 
             int defIndex = 0;
-            //EditorGUILayout.BeginHorizontal();
             foreach (ConstraintDef def in defs)
             {
                 EditorGUILayout.BeginHorizontal();
@@ -57,7 +55,6 @@ public class ClothSimConstraintsEditorWindow : EditorWindow
 
                 ++defIndex;
             }
-            //EditorGUILayout.EndHorizontal();
 
             ParticleComponent.Selected = m_selected;
 

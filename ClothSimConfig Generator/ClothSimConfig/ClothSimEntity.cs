@@ -61,18 +61,21 @@ public class ClothSimEntity : MonoBehaviour
     public GenderEnum Gender { get; set; } = GenderEnum.None;
     public GameObject ShapeRenderer { get; set; } = null;
     public GameObject BlendShapeLoader { get; set; } = null;
-
+    public static Color Translucient = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+    public static Color Opaque = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+    public ClothSimConfig ClothConfig { get; set; }
     public GameObject Model{ get; private set; } = null;
+
+    public bool AllowBlendShapeUpdate { get; set; } = false;
+
+
     private Dictionary<int, GameObject> m_particleEntities = new Dictionary<int, GameObject>();
     private Dictionary<string, GameObject> m_collisionEntities = new Dictionary<string, GameObject>();
     private ClothSimConfig m_config = new ClothSimConfig();
     private Material m_defaultMaterial = null;
     private Script m_luaScript = new Script();
 
-    public static Color Translucient = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-    public static Color Opaque = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-
-    public ClothSimConfig ClothConfig { get; set; }
+    private Dictionary<int, Vector3> m_particlePositionBackup = new Dictionary<int, Vector3>();
 
     // Start is called before the first frame update
     void Start()
@@ -294,10 +297,30 @@ public class ClothSimEntity : MonoBehaviour
         }
     }
 
-    public void ApplyBlendOffsets(Dictionary<string, float> blendShapeWeights)
+    public void ApplyBlendOffsets()
     {
+        BlendShapeLoader loader = BlendShapeLoader.GetComponent<BlendShapeLoader>();
+        Dictionary<string, float> blendValues = loader.GetBlendShapeValues();
 
+        foreach (GameObject gameObject in m_particleEntities.Values)
+        {
+            DynamicParticleComponent particle = gameObject.GetComponent<DynamicParticleComponent>();
 
+            BodyShapeOffSetTable offsetsTable = particle.ParticleInfo.VertInfo.BodyShapeOffsetTable;
+
+            Vector3 offset = Vector3.zero;
+            Vector3 original = m_particlePositionBackup[particle.ParticleInfo.VertInfo.VertID];
+
+            offset = original;
+            foreach (KeyValuePair<string, Vector3> kvp in offsetsTable.Definitions)
+            {
+                if (blendValues.TryGetValue(kvp.Key, out float blendValue))
+                {
+                    offset += Vector3.Lerp(original, kvp.Value, blendValue) - original;
+                }
+            }
+            gameObject.transform.position = offset;
+        }
     }
 
     public void AddConstraint()
@@ -377,11 +400,33 @@ public class ClothSimEntity : MonoBehaviour
         return success;
     }
 
+    public void SaveBlendShapePositions()
+    {
+        foreach(GameObject gameObject in m_particleEntities.Values)
+        {
+            DynamicParticleComponent particle = gameObject.GetComponent<DynamicParticleComponent>();
+
+            m_particlePositionBackup.Add(particle.ParticleInfo.VertInfo.VertID, gameObject.transform.position);
+        }
+    }
+
+    public void RestoreBlendShapePositions()
+    {
+        foreach(KeyValuePair<int, Vector3> kvp in m_particlePositionBackup)
+        {
+            GameObject gameObject = m_particleEntities[kvp.Key];
+            gameObject.transform.position = kvp.Value;
+        }
+        m_particlePositionBackup.Clear();
+    }
+
     // Update is called once per frame
     void Update()
     {
-        
+        if(AllowBlendShapeUpdate)
+            ApplyBlendOffsets();
     }
+
 
     private void OnGUI()
     {
