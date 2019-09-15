@@ -214,11 +214,14 @@ public class ClothSimInspector : Editor
         {
             if(!clothSimEntity.AllowBlendShapeUpdate)
             {
+                loader.SetBlendShapeActive(true);
                 clothSimEntity.SaveBlendShapePositions();
                 clothSimEntity.AllowBlendShapeUpdate = true;
             }
             else
             {
+                loader.SetBlendShapeActive(false);
+                loader.ClearBlendShapes();
                 clothSimEntity.RestoreBlendShapePositions();
                 clothSimEntity.AllowBlendShapeUpdate = false;
             }
