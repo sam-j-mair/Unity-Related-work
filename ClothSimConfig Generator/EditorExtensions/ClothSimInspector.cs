@@ -193,40 +193,39 @@ public class ClothSimInspector : Editor
     {
         m_foldoutStateBlend = EditorGUILayout.BeginFoldoutHeaderGroup(m_foldoutStateBlend, "BlendShapes");
         BlendShapeLoader loader = clothSimEntity.BlendShapeLoader.GetComponent<BlendShapeLoader>();
-        if (GUILayout.Button("Show"))
-        {
-            loader.SetBlendShapeActive(true);
-            
-        }
-        
-        Dictionary<string, float> blendShapeValues = loader.GetBlendShapeValues();
-        Dictionary<string, float> newValues = new Dictionary<string, float>(blendShapeValues);
 
-        foreach (KeyValuePair<string, float> kvp in blendShapeValues)
+        if (GUILayout.Button("Update BlendShapes"))
         {
-            EditorGUILayout.LabelField(kvp.Key);
-            newValues[kvp.Key] = EditorGUILayout.Slider(kvp.Value, 0.0f, 1.0f);
-        }
-
-        loader.SetBlendShapeValues(newValues);
-
-        if(GUILayout.Button("Update BlendShapes"))
-        {
-            if(!clothSimEntity.AllowBlendShapeUpdate)
+            if (!clothSimEntity.AllowBlendShapeUpdate)
             {
+                clothSimEntity.Model.SetActive(false);
                 loader.SetBlendShapeActive(true);
                 clothSimEntity.SaveBlendShapePositions();
                 clothSimEntity.AllowBlendShapeUpdate = true;
             }
             else
             {
+                clothSimEntity.Model.SetActive(true);
                 loader.SetBlendShapeActive(false);
                 loader.ClearBlendShapes();
                 clothSimEntity.RestoreBlendShapePositions();
                 clothSimEntity.AllowBlendShapeUpdate = false;
             }
         }
-        
+
+        if (clothSimEntity.AllowBlendShapeUpdate)
+        {
+            Dictionary<string, float> blendShapeValues = loader.GetBlendShapeValues();
+            Dictionary<string, float> newValues = new Dictionary<string, float>(blendShapeValues);
+
+            foreach (KeyValuePair<string, float> kvp in blendShapeValues)
+            {
+                EditorGUILayout.LabelField(kvp.Key);
+                newValues[kvp.Key] = EditorGUILayout.Slider(kvp.Value, 0.0f, 1.0f);
+            }
+
+            loader.SetBlendShapeValues(newValues);
+        }
 
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         EditorGUILayout.EndFoldoutHeaderGroup();
