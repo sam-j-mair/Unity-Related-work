@@ -10,7 +10,7 @@ public class BlendShapeLoader : MonoBehaviour
     private Dictionary<string, GameObject> BlendShapes { get; set; } = new Dictionary<string, GameObject>();
     private Dictionary<string, int> BlendShapesMapping { get; set; } = new Dictionary<string, int>();
 
-    private GameObject CurrentModel { get; set; } = null;
+    public GameObject CurrentModel { get; private set; } = null;
     void Start ()
     {
         string[] filePaths = Directory.GetFiles(Application.dataPath + "/Resources/BlendShapes", "*.fbx", SearchOption.AllDirectories);

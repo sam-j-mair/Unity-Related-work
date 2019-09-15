@@ -12,11 +12,13 @@ public class ClothSimInspector : Editor
 {
     private bool m_foldoutState = false;
     private bool m_foldoutStateBlend = false;
+    private bool m_foldoutStateBlendShapeOffsets = false;
     int m_currentPropertiesIndex = 0;
 
     [Header("Constraints Definitions")]
     string m_newProperiesName = "";
     int m_selectedVertOrderIndex = 0;
+    int m_blendShapeIndex = 0;
     
 
     public override void OnInspectorGUI()
@@ -117,6 +119,7 @@ public class ClothSimInspector : Editor
         EditorGUILayout.EndHorizontal();
 
         BlendShapePanel(clothSimEntity);
+        GenerateBlendShapeOffsetsPanel(clothSimEntity);
     }
 
     private void DynamicPropertiesDisplay(ClothSimEntity clothSimEntity)
@@ -231,7 +234,30 @@ public class ClothSimInspector : Editor
             }
 
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-            EditorGUILayout.EndFoldoutHeaderGroup();
         }
+        EditorGUILayout.EndFoldoutHeaderGroup();
+    }
+
+    private void GenerateBlendShapeOffsetsPanel(ClothSimEntity clothSimEntity)
+    {
+        m_foldoutStateBlendShapeOffsets = EditorGUILayout.BeginFoldoutHeaderGroup(m_foldoutStateBlendShapeOffsets, "BlendShapes Offsets");
+        BlendShapeLoader loader = null;
+
+        if (clothSimEntity.BlendShapeLoader != null)
+        {
+            loader = clothSimEntity.BlendShapeLoader.GetComponent<BlendShapeLoader>();
+
+            string[] opts = loader.GetBlendShapeValues().Keys.ToArray();
+
+            m_blendShapeIndex = EditorGUILayout.Popup(m_blendShapeIndex, opts);
+
+            if (GUILayout.Button("Generate BlendShape Offsets"))
+            {
+                clothSimEntity.GenerateParticleOffset(opts[m_blendShapeIndex]);
+            }
+        }
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        EditorGUILayout.EndFoldoutHeaderGroup();
     }
 }

@@ -267,6 +267,36 @@ public class ClothSimEntity : MonoBehaviour
         }
     }
 
+    public void GenerateParticleOffset(string blendShapeName)
+    {
+        SkinnedMeshRenderer skinnedMeshRender = Model.GetComponentInChildren<SkinnedMeshRenderer>();
+        BlendShapeLoader loader = BlendShapeLoader.GetComponent<BlendShapeLoader>();
+        MeshCollider meshCollider = loader.CurrentModel.AddComponent<MeshCollider>();
+        Dictionary<string, float> blendValues = loader.GetBlendShapeValues();
+
+        loader.SetBlendShapeValue(blendShapeName, 1.0f);
+        Mesh bakedMesh = new Mesh();
+        skinnedMeshRender.BakeMesh(bakedMesh);
+
+        meshCollider.sharedMesh = bakedMesh;
+
+        foreach(GameObject gameObject in m_particleEntities.Values)
+        {
+            DynamicParticleComponent particle = gameObject.GetComponent<DynamicParticleComponent>();
+            BodyShapeOffSetTable offsets = particle.ParticleInfo.VertInfo.BodyShapeOffsetTable;
+            float colliderRadius = particle.ParticleInfo.ConfigValues.m_colliderRadius;
+            float colliderRadiusScale = particle.ParticleInfo.VertInfo.ColliderRadiusScale;
+            Vector3 pointOnMesh = meshCollider.ClosestPoint(gameObject.transform.position);
+            Vector3 dir = (pointOnMesh - gameObject.transform.position).normalized;
+
+            Vector3 finalPosition = pointOnMesh + dir * (colliderRadius * colliderRadiusScale);
+
+            offsets.Definitions[blendShapeName] = finalPosition;
+        }
+
+        DestroyImmediate(meshCollider);
+    }
+
     public void DeleteParticle(GameObject particleObject)
     {
         if (m_particleEntities.ContainsValue(particleObject))
