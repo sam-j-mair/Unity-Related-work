@@ -12,6 +12,7 @@ using static DynamicPropertiesTable;
 using static VertInfoTable;
 using System.Linq;
 using System;
+using static CollisionInfoTable;
 
 [MoonSharpUserData]
 public class Native
@@ -75,7 +76,8 @@ public class ClothSimEntity : MonoBehaviour
     private Material m_defaultMaterial = null;
     private Script m_luaScript = new Script();
 
-    private Dictionary<int, Vector3> m_particlePositionBackup = new Dictionary<int, Vector3>();
+    private Dictionary<int, Vector3> m_particleSnapShot = new Dictionary<int, Vector3>();
+    private Dictionary<string, CollisionSnapShotData> m_collisionSnapShot = new Dictionary<string, CollisionSnapShotData>();
 
     // Start is called before the first frame update
     void Start()
@@ -309,7 +311,7 @@ public class ClothSimEntity : MonoBehaviour
             BodyShapeOffSetTable offsetsTable = particle.ParticleInfo.VertInfo.BodyShapeOffsetTable;
 
             Vector3 offset = Vector3.zero;
-            Vector3 original = m_particlePositionBackup[particle.ParticleInfo.VertInfo.VertID];
+            Vector3 original = m_particleSnapShot[particle.ParticleInfo.VertInfo.VertID];
 
             offset = original;
             foreach (KeyValuePair<string, Vector3> kvp in offsetsTable.Definitions)
@@ -320,6 +322,14 @@ public class ClothSimEntity : MonoBehaviour
                 }
             }
             gameObject.transform.position = offset;
+        }
+
+        foreach(GameObject gameObject in m_collisionEntities.Values)
+        {
+            DynamicCollisionComponent collision = gameObject.GetComponent<DynamicCollisionComponent>();
+            CollisionInfoShapeOffsets offsetsTable = collision.CollisionInfo.CollisionInfoDefinition.BodyShapeOffSets;
+
+
         }
     }
 
@@ -400,24 +410,55 @@ public class ClothSimEntity : MonoBehaviour
         return success;
     }
 
-    public void SaveBlendShapePositions()
+    public void SaveSnapShot()
     {
-        foreach(GameObject gameObject in m_particleEntities.Values)
+        Debug.Assert(m_particleSnapShot.Count() == 0);
+        Debug.Assert(m_collisionSnapShot.Count() == 0);
+
+        foreach (GameObject gameObject in m_particleEntities.Values)
         {
             DynamicParticleComponent particle = gameObject.GetComponent<DynamicParticleComponent>();
 
-            m_particlePositionBackup.Add(particle.ParticleInfo.VertInfo.VertID, gameObject.transform.position);
+            m_particleSnapShot.Add(particle.ParticleInfo.VertInfo.VertID, gameObject.transform.position);
+        }
+
+        foreach(GameObject gameObject in m_collisionEntities.Values)
+        {
+            DynamicCollisionComponent collision = gameObject.GetComponent<DynamicCollisionComponent>();
+            CollisionInfoDefinition def = collision.CollisionInfo.CollisionInfoDefinition;
+
+            m_collisionSnapShot.Add(def.Name, new CollisionSnapShotData
+            {
+                PositionOffset = def.PositionOffset,
+                RotationOffset = def.RotationOffset,
+                Length = def.Length,
+                Radius = def.Radius
+            });
         }
     }
 
-    public void RestoreBlendShapePositions()
+    public void RestoreSnapShot()
     {
-        foreach(KeyValuePair<int, Vector3> kvp in m_particlePositionBackup)
+        foreach(KeyValuePair<int, Vector3> kvp in m_particleSnapShot)
         {
             GameObject gameObject = m_particleEntities[kvp.Key];
             gameObject.transform.position = kvp.Value;
         }
-        m_particlePositionBackup.Clear();
+
+        foreach(KeyValuePair<string, CollisionSnapShotData> kvp in m_collisionSnapShot)
+        {
+            GameObject gameObject = m_collisionEntities[kvp.Key];
+            DynamicCollisionComponent collision = gameObject.GetComponent<DynamicCollisionComponent>();
+            CollisionInfoDefinition def = collision.CollisionInfo.CollisionInfoDefinition;
+
+            def.PositionOffset = kvp.Value.PositionOffset;
+            def.RotationOffset = kvp.Value.RotationOffset;
+            def.Length = kvp.Value.Length;
+            def.Radius = kvp.Value.Radius;
+        }
+
+        m_particleSnapShot.Clear();
+        m_collisionSnapShot.Clear();
     }
 
     // Update is called once per frame

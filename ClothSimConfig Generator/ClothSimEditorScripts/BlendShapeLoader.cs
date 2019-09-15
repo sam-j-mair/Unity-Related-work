@@ -66,13 +66,11 @@ public class BlendShapeLoader : MonoBehaviour
 
     public void SetBlendShapeValue(string name, float value)
     {
-        Debug.Assert(value >= 0.0f && value <= 1.0f);
-
         if (BlendShapesMapping.TryGetValue(name, out int index))
         {
             SkinnedMeshRenderer skinnedMeshRenderer = CurrentModel.GetComponentInChildren<SkinnedMeshRenderer>();
 
-            skinnedMeshRenderer.SetBlendShapeWeight(index, value);
+            skinnedMeshRenderer.SetBlendShapeWeight(index, value * 100.0f);
         }
     }
 
@@ -83,7 +81,7 @@ public class BlendShapeLoader : MonoBehaviour
         {
             SkinnedMeshRenderer skinnedMeshRenderer = CurrentModel.GetComponentInChildren<SkinnedMeshRenderer>();
 
-            value = skinnedMeshRenderer.GetBlendShapeWeight(index);
+            value = skinnedMeshRenderer.GetBlendShapeWeight(index) / 100.0f;
         }
 
         return value;

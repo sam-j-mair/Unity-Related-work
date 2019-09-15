@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class CollisionSnapShotData
+{
+    public Vector3  PositionOffset { get; set; } = Vector3.zero;
+    public Vector3  RotationOffset { get; set; } = Vector3.zero;
+    public float    Length { get; set; } = 0.0f;
+    public float    Radius { get; set; } = 0.0f;
+}
+
 public class DynamicCollisionComponent : MonoBehaviour
 {
     public ClothSimEntity ClothSimEntity { get; set; }
