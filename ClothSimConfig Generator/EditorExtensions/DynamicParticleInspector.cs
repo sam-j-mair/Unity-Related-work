@@ -107,13 +107,14 @@ public class DynamincParticleInspector : Editor
         BlendShapeLoader blendShapeLoader = clothSimEntity.BlendShapeLoader.GetComponent<BlendShapeLoader>();
 
         string[] opts = offsetsTable.Definitions.Keys.ToArray();
-        EditorGUILayout.BeginHorizontal();
+        
         m_currentOffsetsIndex = EditorGUILayout.Popup(m_currentOffsetsIndex, opts);
         Material modelMaterial = clothSimEntity.Model.GetComponentInChildren<SkinnedMeshRenderer>().material;
 
         //this is Blah
         if (opts.Count() > 0)
         {
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Edit"))
             {
                 if (!m_isEditMode)
@@ -163,6 +164,7 @@ public class DynamincParticleInspector : Editor
                 EditorGUILayout.EndHorizontal();
             }
         }
+        
 
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Add Offset"))

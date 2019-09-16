@@ -117,14 +117,23 @@ public class ClothSimEntity : MonoBehaviour
         return gameObject;
     }
 
-    public void ClearEntities()
+    public void ClearConfig()
     {
-        foreach(KeyValuePair<int, GameObject> kvp in m_particleEntities)
+        foreach(GameObject gameObject in m_particleEntities.Values)
         {
-            Destroy(kvp.Value);
+            Destroy(gameObject);
         }
 
         m_particleEntities.Clear();
+
+        foreach (GameObject gameObject in m_collisionEntities.Values)
+        {
+            Destroy(gameObject);
+        }
+
+        m_collisionEntities.Clear();
+
+        m_config.Clear();
     }
 
     public void LoadModel()
@@ -164,7 +173,7 @@ public class ClothSimEntity : MonoBehaviour
 
         List<ParticleInfo> particleInfo = m_config.GenerateFromConfig();
 
-        ClearEntities();
+        ClearConfig();
 
         GameObject rootParticle = new GameObject();
         rootParticle.name = "Particles";

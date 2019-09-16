@@ -110,4 +110,9 @@ public class VertInfoTable : ILuaSerialiser
         success = true;
         return success;
     }
+
+    public void Clear()
+    {
+        m_vertInfoList.Clear();
+    }
 }

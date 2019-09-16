@@ -21,6 +21,16 @@ public class ConfigValues
     public float m_colliderRadius = 1.0f;
     public float m_linearDamping = 0.0f;
     public float m_volumeValue = 0.0f;
+
+    public void Reset()
+    {
+        m_mass = 1.0f;
+        m_pullToSkin = 1.0f;
+        m_pullToSkinLimit = 1.0f;
+        m_colliderRadius = 1.0f;
+        m_linearDamping = 0.0f;
+        m_volumeValue = 0.0f;
+    }
 }
 
 [System.Serializable]
@@ -88,6 +98,16 @@ public class ClothSimConfig
         AddVert(particleInfo.VertInfo);
 
         return particleInfo;
+    }
+
+    public void Clear()
+    {
+        m_configValues.Reset();
+        m_vertOrders.Clear();
+        m_propertiesTable.Clear();
+        m_vertInfoTable.Clear();
+        m_jointInfoTable.Clear();
+        m_collisionInfoTable.Clear();
     }
 
     public List<ParticleInfo> GenerateFromConfig()

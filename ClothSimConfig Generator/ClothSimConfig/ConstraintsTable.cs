@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ConstraintsTable : ILuaSerialiser
 {
-    List<ConstraintDef> m_constraintsList = new List<ConstraintDef>();
+    public List<ConstraintDef> ConstraintsDefs { get; set; } = new List<ConstraintDef>();
     
     public class ConstraintDef
     {
@@ -19,7 +19,7 @@ public class ConstraintsTable : ILuaSerialiser
         bool success = false;
 
         stringBuilder.Append("            constraints = {\n");
-        foreach (ConstraintDef def in m_constraintsList)
+        foreach (ConstraintDef def in ConstraintsDefs)
         {
             stringBuilder.Append("                { constrain_type = '" + def.ConstraintType + "', target_vert = " + def.TargetVert.ToString() + " },\n");
         }
@@ -38,7 +38,7 @@ public class ConstraintsTable : ILuaSerialiser
         {
             Table table = entry.Table;
 
-            m_constraintsList.Add(new ConstraintDef
+            ConstraintsDefs.Add(new ConstraintDef
             {
                 ConstraintType = table.Get("constrain_type").String,
                 TargetVert = (int)table.Get("target_vert").Number,
@@ -50,8 +50,8 @@ public class ConstraintsTable : ILuaSerialiser
         return success;
     }
 
-    public List<ConstraintDef> ConstraintsDefs
+    public void Clear()
     {
-        get { return m_constraintsList; }
+        ConstraintsDefs.Clear();
     }
 }

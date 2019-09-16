@@ -43,4 +43,9 @@ public class BodyShapeOffSetTable : ILuaSerialiser
 
         return success;
     }
+
+    public void Clear()
+    {
+        Definitions.Clear();
+    }
 }

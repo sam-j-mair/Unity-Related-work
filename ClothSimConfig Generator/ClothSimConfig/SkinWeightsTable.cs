@@ -57,4 +57,9 @@ public class SkinWeightsTable : ILuaSerialiser
 
         return success;
     }
+
+    public void Clear()
+    {
+        m_skinWeights.Clear();
+    }
 }

@@ -110,4 +110,9 @@ public class JointInfoTable : ILuaSerialiser
         success = true;
         return success;
     }
+
+    public void Clear()
+    {
+        m_jointInfoList.Clear();
+    }
 }

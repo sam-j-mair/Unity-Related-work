@@ -145,15 +145,9 @@ public class CollisionInfoTable : ILuaSerialiser
         success = true;
         return success;
     }
+
+    public void Clear()
+    {
+        CollisionInfoList.Clear();
+    }
 }
-
-
-
-
-//{ name = 'm_Spine3',
-//joint_name = 'Spine3',
-//collision_type = 'capsule', 
-//radius = 0.138, 
-//length = 0.072, 
-//translate = vec3(0, 0.01911, 0.02131), 
-//rotate = vec3(0, 0, 90),

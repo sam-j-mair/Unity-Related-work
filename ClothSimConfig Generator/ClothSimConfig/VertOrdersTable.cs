@@ -6,18 +6,7 @@ using UnityEngine;
 
 public class VertOrdersTable
 {
-    private Dictionary<string, List<int>> m_vertOrders = new Dictionary<string, List<int>>();
-    public Dictionary<string, List<int>> VertOrders { get; private set; }
-
-    public VertOrdersTable()
-    {
-        VertOrders = m_vertOrders;
-    }
-
-    public void Render()
-    {
-
-    }
+    public Dictionary<string, List<int>> VertOrders { get; private set; } = new Dictionary<string, List<int>>();
 
     public bool Deserialise(Table vertOrdersTable)
     {
@@ -31,7 +20,7 @@ public class VertOrdersTable
                 Table vertOrder = pair.Value.Table;
 
                 List<int> orderList = new List<int>();
-                m_vertOrders.Add(name, orderList);
+                VertOrders.Add(name, orderList);
 
                 foreach (DynValue value in vertOrder.Values)
                 {
@@ -52,7 +41,7 @@ public class VertOrdersTable
 
         stringBuilder.Append("    vert_order = {\n");
 
-        foreach (KeyValuePair<string, List<int>> kvp in m_vertOrders)
+        foreach (KeyValuePair<string, List<int>> kvp in VertOrders)
         {
             stringBuilder.Append("        " + kvp.Key + " = {\n");
             float itemCount = 0.0f;
@@ -72,5 +61,10 @@ public class VertOrdersTable
 
         success = true;
         return success;
+    }
+
+    public void Clear()
+    {
+        VertOrders.Clear();
     }
 }

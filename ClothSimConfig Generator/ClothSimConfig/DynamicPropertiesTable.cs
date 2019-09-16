@@ -86,6 +86,11 @@ public class DynamicPropertiesTable : ILuaSerialiser
         return m_constraintDefinations;
     }
 
+    public void Clear()
+    {
+        m_constraintDefinations.Clear();
+    }
+
     public class DynamicPropertiesDef
     {
         public float Stretch { get; set; }
