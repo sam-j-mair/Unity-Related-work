@@ -173,8 +173,6 @@ public class ClothSimEntity : MonoBehaviour
 
         List<ParticleInfo> particleInfo = m_config.GenerateFromConfig();
 
-        ClearConfig();
-
         GameObject rootParticle = new GameObject();
         rootParticle.name = "Particles";
         rootParticle.transform.position = Vector3.zero;
@@ -415,6 +413,8 @@ public class ClothSimEntity : MonoBehaviour
     public bool LoadConfiguration()
     {
         bool success = false;
+
+        ClearConfig();
 
         m_luaScript.DoFile(m_scriptPath);
         success = m_config.Deserialise(m_luaScript);

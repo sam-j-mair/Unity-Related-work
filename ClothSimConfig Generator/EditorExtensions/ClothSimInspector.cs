@@ -66,8 +66,6 @@ public class ClothSimInspector : Editor
             Uri absolutePath = new Uri(EditorUtility.OpenFilePanel("Open", "/Resourses/Models", "FBX"));
             Uri assetsPath = new Uri(Application.dataPath);
             clothSimEntity.ModelPath = assetsPath.MakeRelativeUri(absolutePath).ToString();
-            clothSimEntity.LoadModel();
-
             clothSimEntity.m_scriptPath = EditorUtility.OpenFilePanel("Open", "/Assets/Scenes/ClothSimConfig Generator", "lua");
             clothSimEntity.LoadConfiguration();
         }
@@ -93,6 +91,12 @@ public class ClothSimInspector : Editor
             clothSimEntity.m_outputPath = EditorUtility.SaveFilePanel("Save", "/Assets/Scenes/ClothSimConfig Generator", "output", "lua");
             clothSimEntity.SaveConfiguration();
         }
+
+        if (GUILayout.Button("Reload"))
+        {
+            clothSimEntity.LoadConfiguration();
+        }
+
         EditorGUILayout.EndHorizontal();
 
         if (GUILayout.Button("Generate Collision From Config"))
