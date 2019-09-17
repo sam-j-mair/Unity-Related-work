@@ -173,10 +173,14 @@ public class ClothSimEntity : MonoBehaviour
 
         List<ParticleInfo> particleInfo = m_config.GenerateFromConfig();
 
-        GameObject rootParticle = new GameObject();
-        rootParticle.name = "Particles";
-        rootParticle.transform.position = Vector3.zero;
-        rootParticle.transform.SetParent(transform);
+        GameObject rootParticle = GameObject.Find("Particles");
+        if (rootParticle == null)
+        {
+            rootParticle = new GameObject();
+            rootParticle.name = "Particles";
+            rootParticle.transform.position = Vector3.zero;
+            rootParticle.transform.SetParent(transform);
+        }
 
         foreach (ParticleInfo info in particleInfo)
         {
@@ -219,12 +223,18 @@ public class ClothSimEntity : MonoBehaviour
     public void GenerateCollisionFromConfig()
     {
         List<CollisionInfo> collisionInfo = m_config.GenerateCollisionFromConfig();
-        GameObject rootCollision = new GameObject();
-        rootCollision.name = "Collision";
-        rootCollision.transform.position = Vector3.zero;
-        rootCollision.transform.SetParent(transform);
 
-        foreach(CollisionInfo info in collisionInfo)
+        GameObject rootCollision = GameObject.Find("Collision");
+
+        if(rootCollision == null)
+        {
+            rootCollision = new GameObject();
+            rootCollision.name = "Collision";
+            rootCollision.transform.position = Vector3.zero;
+            rootCollision.transform.SetParent(transform);
+        }
+
+        foreach (CollisionInfo info in collisionInfo)
         {
             GameObject gameObject = new GameObject();
             DynamicCollisionComponent collision = gameObject.AddComponent<DynamicCollisionComponent>();

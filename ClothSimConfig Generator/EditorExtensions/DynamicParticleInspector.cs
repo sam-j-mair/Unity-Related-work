@@ -25,6 +25,7 @@ public class DynamincParticleInspector : Editor
         vertInfo.PullToSkinScale = EditorGUILayout.FloatField("Pull To Skin Scale", vertInfo.PullToSkinScale);
         vertInfo.ColliderRadiusScale = EditorGUILayout.FloatField("Collider Radius Scale", vertInfo.ColliderRadiusScale);
         vertInfo.Position = EditorGUILayout.Vector3Field("Position", vertInfo.Position);
+        vertInfo.IsStatic = EditorGUILayout.Toggle("Static", vertInfo.IsStatic);
 
         JointInfoDisplay(jointInfo);
 

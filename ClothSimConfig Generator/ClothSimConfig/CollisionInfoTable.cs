@@ -130,11 +130,16 @@ public class CollisionInfoTable : ILuaSerialiser
                 BoneName = entryValue.Get("joint_name").String,
                 CollisionType = entryValue.Get("collision_type").String,
                 Radius = (float)entryValue.Get("radius").Number,
-                Length = (float)entryValue.Get("length").Number,
                 PositionOffset = entryValue.Get("translate").ToObject<Vector3>(),
-                RotationOffset = entryValue.Get("rotate").ToObject<Vector3>(),
+                
                 BodyShapeOffSets = new CollisionInfoShapeOffsets()
             };
+
+            if (def.CollisionType == "capsule")
+            {
+                def.Length = (float)entryValue.Get("length").Number;
+                def.RotationOffset = entryValue.Get("rotate").ToObject<Vector3>();
+            }
 
             Table bodyShapeOffsetTable = entryValue.Get("body_shape_offset").Table;
             def.BodyShapeOffSets.Deserialise(bodyShapeOffsetTable);
