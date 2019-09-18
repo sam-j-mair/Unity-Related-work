@@ -20,19 +20,20 @@ public class DynamincParticleInspector : Editor
         JointInfoTable.JointInfoDefinition jointInfo = dynamicParticle.ParticleInfo.JointInfo;
         BodyShapeOffSetTable bodyShapesOffsetsTable = dynamicParticle.ParticleInfo.VertInfo.BodyShapeOffsetTable;
 
-        vertInfo.VertID = EditorGUILayout.IntField("Vert ID", vertInfo.VertID);
+        int vertID = vertInfo.VertID;
+        vertInfo.VertID = EditorGUILayout.IntField("Vert ID", vertID);
+        dynamicParticle.gameObject.name = vertInfo.VertID != vertID ? "Particle VertID : " + vertInfo.VertID.ToString() : dynamicParticle.gameObject.name;
+
         vertInfo.MassScale = EditorGUILayout.FloatField("Mass Scale", vertInfo.MassScale);
         vertInfo.PullToSkinScale = EditorGUILayout.FloatField("Pull To Skin Scale", vertInfo.PullToSkinScale);
         vertInfo.ColliderRadiusScale = EditorGUILayout.FloatField("Collider Radius Scale", vertInfo.ColliderRadiusScale);
         vertInfo.Position = EditorGUILayout.Vector3Field("Position", vertInfo.Position);
         vertInfo.IsStatic = EditorGUILayout.Toggle("Static", vertInfo.IsStatic);
 
-        JointInfoDisplay(jointInfo);
+        //update vert id.
 
-//         if (GUILayout.Button("Body Shape Editor"))
-//         {
-// 
-//         }
+
+        JointInfoDisplay(jointInfo);
 
         if (GUILayout.Button("Skin Weights Editor"))
         {

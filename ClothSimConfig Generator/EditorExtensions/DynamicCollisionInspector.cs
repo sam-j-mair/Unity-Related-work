@@ -43,13 +43,14 @@ public class DynamicCollisionInspector : Editor
         BlendShapeLoader blendShapeLoader = clothSimEntity.BlendShapeLoader.GetComponent<BlendShapeLoader>();
 
         string[] opts = offsetsTable.BodyShapeOffsets.Keys.ToArray();
-        EditorGUILayout.BeginHorizontal();
+        
         m_currentOffsetsIndex = EditorGUILayout.Popup(m_currentOffsetsIndex, opts);
         Material modelMaterial = clothSimEntity.Model.GetComponentInChildren<SkinnedMeshRenderer>().material;
         bool isCapsule = dynamicCollision.CollisionInfo.CollisionInfoDefinition.CollisionType == "capsule";
 
         if(opts.Count() > 0)
         {
+            EditorGUILayout.BeginHorizontal();
             //this is Blah
             if (GUILayout.Button("Edit"))
             {

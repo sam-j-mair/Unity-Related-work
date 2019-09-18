@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
- 
- public class ViewSkeleton : MonoBehaviour
+using UnityEditor;
+
+public class ViewSkeleton : MonoBehaviour
 {
 
     public Transform rootNode;
     public Transform[] childNodes;
+    private static readonly Vector3 m_offset = new Vector3(0.0f, 0.05f, 0.0f);
 
     void OnDrawGizmos()
     {
@@ -31,6 +33,7 @@ using System.Collections.Generic;
                     Gizmos.color = Color.black;
                     Gizmos.DrawLine(child.position, child.parent.position);
                     Gizmos.DrawCube(child.position, new Vector3(.01f, .01f, .01f));
+                    Handles.Label(child.position + m_offset, child.name);
                 }
             }
         }

@@ -103,6 +103,16 @@ public class ClothSimEntity : MonoBehaviour
 
     public GameObject CreateParticle()
     {
+        GameObject rootParticle = GameObject.Find("Particles");
+        if (rootParticle == null)
+        {
+            rootParticle = new GameObject();
+            rootParticle.name = "Particles";
+            rootParticle.transform.position = Vector3.zero;
+            rootParticle.transform.SetParent(transform);
+        }
+
+
         GameObject gameObject = new GameObject();
         DynamicParticleComponent particle = gameObject.AddComponent<DynamicParticleComponent>();
         particle.ParticleInfo = m_config.CreateNewParticle();
@@ -113,6 +123,7 @@ public class ClothSimEntity : MonoBehaviour
         particle.ConstraintParticles = new List<DynamicParticleComponent.ConstraintInfo>();
         gameObject.transform.parent = transform;
         m_particleEntities.Add(particle.ParticleInfo.VertInfo.VertID, gameObject);
+        gameObject.transform.SetParent(rootParticle.transform);
 
         return gameObject;
     }
