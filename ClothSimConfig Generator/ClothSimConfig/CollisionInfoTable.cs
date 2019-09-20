@@ -39,6 +39,13 @@ public class CollisionInfoTable : ILuaSerialiser
                 Vector3 t = def.PositionOffset;
                 Vector3 r = def.RotationOffset;
 
+                if (r.x > 180.0f)
+                    r.x -= 360f;
+                if (r.y > 180.0f)
+                    r.y -= 360f;
+                if (r.z > 180.0f)
+                    r.z -= 360f;
+
                 stringBuilder.Append("body_shape = '" + name + "', ");
                 stringBuilder.Append("radius = " + def.Radius.ToString() + ", ");
 
@@ -93,6 +100,13 @@ public class CollisionInfoTable : ILuaSerialiser
 
             Vector3 t = def.PositionOffset;
             Vector3 r = def.RotationOffset;
+
+            if (r.x > 180.0f)
+                r.x -= 360f;
+            if (r.y > 180.0f)
+                r.y -= 360f;
+            if (r.z > 180.0f)
+                r.z -= 360;
 
             stringBuilder.Append("name = '" + def.Name + "', ");
             stringBuilder.Append("joint_name = '" + def.BoneName + "', ");

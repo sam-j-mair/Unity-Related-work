@@ -31,7 +31,16 @@ public class DynamicCollisionInspector : Editor
         collisionInfo.Radius = EditorGUILayout.FloatField("Radius", collisionInfo.Radius);
 
         collisionInfo.PositionOffset = EditorGUILayout.Vector3Field("Offset", collisionInfo.PositionOffset);
-        collisionInfo.RotationOffset = EditorGUILayout.Vector3Field("Rotation", collisionInfo.RotationOffset);
+
+        Vector3 r = collisionInfo.RotationOffset;
+        if (r.x > 180.0f)
+            r.x -= 360f;
+        if (r.y > 180.0f)
+            r.y -= 360f;
+        if (r.z > 180.0f)
+            r.z -= 360f;
+
+        collisionInfo.RotationOffset = EditorGUILayout.Vector3Field("Rotation", r);
 
         BlendShapeEditor(clothSimEntity, dynamicCollision, dynamicCollision.CollisionInfo.CollisionInfoDefinition.BodyShapeOffSets);
     }
