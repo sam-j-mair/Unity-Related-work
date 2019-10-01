@@ -166,7 +166,9 @@ public class ClothSimEntity : MonoBehaviour
         if (Model != null)
         {
             SkinnedMeshRenderer renderer = Model.GetComponentInChildren<SkinnedMeshRenderer>();
-            renderer.material = m_defaultMaterial;
+            
+            if(renderer != null)
+                renderer.material = m_defaultMaterial;
 
             Model.transform.position = Vector3.zero;
             Model.transform.SetParent(transform);
@@ -270,6 +272,8 @@ public class ClothSimEntity : MonoBehaviour
 
                 gameObject.transform.rotation = dummyObject.transform.rotation;
                 gameObject.transform.position = dummyObject.transform.position;
+
+                Vector3 euler = collision.GetEulerAnglesDegrees(gameObject.transform.localRotation);
 
                 collision.DummyObject = dummyObject;
             }

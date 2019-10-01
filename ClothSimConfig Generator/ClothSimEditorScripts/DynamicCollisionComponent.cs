@@ -37,28 +37,29 @@ public class DynamicCollisionComponent : MonoBehaviour
     void Update()
     {
         //This allows us to handle changes coming from the editor inspector.
-        if (DummyObject.transform.localPosition != CollisionInfo.CollisionInfoDefinition.PositionOffset)
-        {
-            DummyObject.transform.localPosition = CollisionInfo.CollisionInfoDefinition.PositionOffset;
-            transform.position = DummyObject.transform.position;
-        }
+//         if (DummyObject.transform.localPosition != CollisionInfo.CollisionInfoDefinition.PositionOffset)
+//         {
+//             DummyObject.transform.localPosition = CollisionInfo.CollisionInfoDefinition.PositionOffset;
+//             transform.position = DummyObject.transform.position;
+//         }
 
-        Vector3 eulerAngleInit = GetEulerAnglesDegrees(DummyObject.transform.localRotation);
+//         Vector3 eulerAngleInit = GetEulerAnglesDegrees(DummyObject.transform.localRotation);
+// 
+//         if (eulerAngleInit != CollisionInfo.CollisionInfoDefinition.RotationOffset)
+//         {
+//             DummyObject.transform.localEulerAngles = CollisionInfo.CollisionInfoDefinition.RotationOffset;
+//             transform.rotation = DummyObject.transform.rotation;
+//         }
 
-        if (eulerAngleInit != CollisionInfo.CollisionInfoDefinition.RotationOffset)
-        {
-            DummyObject.transform.localEulerAngles = CollisionInfo.CollisionInfoDefinition.RotationOffset;
-            transform.rotation = DummyObject.transform.rotation;
-        }
-
-        DummyObject.transform.position = transform.position;
-        DummyObject.transform.rotation = transform.rotation;
 
         CollisionInfo.CollisionInfoDefinition.PositionOffset = DummyObject.transform.localPosition;
 
         Vector3 eulerAngles = GetEulerAnglesDegrees(DummyObject.transform.localRotation);
 
-        CollisionInfo.CollisionInfoDefinition.RotationOffset = eulerAngles;
+        CollisionInfo.CollisionInfoDefinition.RotationOffset = DummyObject.transform.localEulerAngles;//eulerAngles;
+
+        DummyObject.transform.position = transform.position;
+        DummyObject.transform.rotation = transform.rotation;
     }
 
     private Vector3 ConvertAngleRange(Vector3 eulerAngles)
